@@ -1,3 +1,9 @@
 [submodule "deps/sdl"]
 	path = deps/sdl
 	url = https://github.com/SDL-mirror/SDL
+[submodule "deps/physfs"]
+	path = deps/physfs
+	url = https://github.com/Didstopia/physfs
+[submodule "deps/wren"]
+	path = deps/wren
+	url = https://github.com/munificent/wren
