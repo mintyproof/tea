@@ -3,6 +3,7 @@ project(testengine C)
 add_subdirectory(deps/sdl)
 
 set(ENGINE_SOURCES
+	src/assets.c
 	src/main.c
 )
 

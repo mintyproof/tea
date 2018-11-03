@@ -1,7 +1,10 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <SDL.h>
+
+#include "assets.h"
 
 typedef struct Engine {
     SDL_Window* window;
@@ -54,6 +57,20 @@ void engine_quit(Engine *engine) {
 }
 
 int main() {
+    AssetManager* am = new_asset_manager();
+    if (!load_asset(am, "test.txt")) exit(2);
+    
+    const char* data;
+    uint32_t length;
+    if (find_asset(am, "test.txt", &length, &data)) {
+        char* buf = malloc(length+1);
+        memcpy(buf, data, length);
+        buf[length] = '\0';
+
+        printf("Test file says: %s\n", buf);
+    }
+
+
     Engine engine = engine_init();
     engine_loop(&engine);
     engine_quit(&engine);
