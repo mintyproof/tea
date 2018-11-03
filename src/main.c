@@ -3,12 +3,14 @@
 
 #include <SDL.h>
 
+typedef struct Engine {
+    SDL_Window* window;
+} Engine;
 
-int main() {
-    // Init code
+Engine engine_init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("Error initializing SDL: %s\n", SDL_GetError());
-        return 1;
+        exit(1);
     }
 
     SDL_Window* window = SDL_CreateWindow("Test Engine",
@@ -20,14 +22,19 @@ int main() {
 
     if (window == NULL) {
         printf("Error initializing creating SDL window: %s\n", SDL_GetError());
-        return 1;
+        exit(1);
     }
 
     // Draw to fill the framebuffer, just once
     SDL_Surface* surf = SDL_GetWindowSurface(window);
     SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, 255, 0, 0));
 
-    // Begin the main loop
+    return (Engine) {
+        .window = window
+    };
+}
+
+void engine_loop(Engine* engine) {
     bool quit = false;
     while (!quit) {
         SDL_Event e;
@@ -37,11 +44,18 @@ int main() {
             }
         }
 
-        SDL_UpdateWindowSurface(window);
+        SDL_UpdateWindowSurface(engine->window);
     }
+}
 
-    // Clean up and exit
-    SDL_DestroyWindow(window);
+void engine_quit(Engine *engine) {
+    SDL_DestroyWindow(engine->window);
     SDL_Quit();
+}
+
+int main() {
+    Engine engine = engine_init();
+    engine_loop(&engine);
+    engine_quit(&engine);
     return 0;
 }
