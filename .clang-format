@@ -14,7 +14,7 @@ BinPackArguments: false
 BinPackParameters: false
 ColumnLimit: 120
 FixNamespaceComments: false
-IncludeBlocks: Preservechar
+IncludeBlocks: Preserve
 IndentWidth: 4
 NamespaceIndentation: All
 SpaceBeforeCtorInitializerColon: false
