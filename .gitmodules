@@ -7,3 +7,6 @@
 [submodule "deps/wren"]
 	path = deps/wren
 	url = https://github.com/munificent/wren
+[submodule "deps/tinytoml"]
+	path = deps/tinytoml
+	url = https://github.com/mayah/tinytoml

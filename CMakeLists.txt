@@ -1,11 +1,43 @@
-project(testengine C)
+cmake_minimum_required(VERSION 3.0)
 
+project(testengine C CXX)
+set (CMAKE_C_STANDARD 11)
+set (CMAKE_CXX_STANDARD 11)
+
+# Both SDL and PhysFS's CMakeLists add an "uninstall" target - these conflict
+# This overrides that but may cause issues using other build backends
+set (ALLOW_DUPLICATE_CUSTOM_TARGETS ON)
+
+# SDL
 add_subdirectory(deps/sdl)
 
+# Wren
+set(WREN_SOURCES
+	deps/wren/src/vm/wren_compiler.c
+	deps/wren/src/vm/wren_core.c
+	deps/wren/src/vm/wren_debug.c
+	deps/wren/src/vm/wren_primitive.c
+	deps/wren/src/vm/wren_utils.c
+	deps/wren/src/vm/wren_value.c
+	deps/wren/src/vm/wren_vm.c
+
+	deps/wren/src/optional/wren_opt_meta.c
+	deps/wren/src/optional/wren_opt_random.c
+)
+
+add_library(wren ${WREN_SOURCES})
+target_include_directories(wren PRIVATE deps/wren/src/optional deps/wren/src/vm)
+target_include_directories(wren BEFORE PUBLIC deps/wren/src/include)  # BEFORE to override system wren.h if existing
+
+# TinyTOML
+add_library(tinytoml INTERFACE)
+target_include_directories(tinytoml INTERFACE deps/tinytoml/include)
+
+# Engine
 set(ENGINE_SOURCES
-	src/assets.c
-	src/main.c
+	src/engine.cpp
+	src/main.cpp
 )
 
 add_executable(testengine ${ENGINE_SOURCES})
-target_link_libraries(testengine SDL2-static)
+target_link_libraries(testengine wren tinytoml SDL2-static)
