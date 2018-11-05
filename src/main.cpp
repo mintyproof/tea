@@ -1,9 +1,8 @@
 #include <SDL.h>
 
-#include "engine.hpp"
+#include "engine.h"
 
-int main()
-{
-    auto engine = Engine::init();
+int main() {
+    auto engine = Tea::Engine::init();
     return engine->run();
 }

@@ -1,0 +1,21 @@
+Language: Cpp
+BasedOnStyle: Chromium
+
+AccessModifierOffset: -4
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignOperands: true
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+BinPackArguments: false
+BinPackParameters: false
+ColumnLimit: 120
+FixNamespaceComments: false
+IncludeBlocks: Preserve
+IndentWidth: 4
+NamespaceIndentation: All
+SpaceBeforeCtorInitializerColon: false
+SpaceBeforeInheritanceColon: false

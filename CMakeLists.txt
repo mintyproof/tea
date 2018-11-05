@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(testengine C CXX)
+project(tea C CXX)
 set (CMAKE_C_STANDARD 11)
 set (CMAKE_CXX_STANDARD 11)
 
@@ -39,5 +39,10 @@ set(ENGINE_SOURCES
 	src/main.cpp
 )
 
-add_executable(testengine ${ENGINE_SOURCES})
-target_link_libraries(testengine wren tinytoml SDL2-static)
+add_executable(tea ${ENGINE_SOURCES})
+target_link_libraries(tea wren tinytoml SDL2-static)
+if (MSVC)
+	target_compile_options(tea PRIVATE /W4 /Wx)
+else ()
+	target_compile_options(tea PRIVATE -Wall -Wextra -pedantic -Werror -Wno-error=unused)
+endif ()
