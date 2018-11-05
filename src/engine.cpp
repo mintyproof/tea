@@ -116,21 +116,31 @@ namespace Tea {
     int Engine::run() {
         std::cout << "Starting up." << std::endl;
 
+        // First find the main module specificed in the manifest
         auto separator_index = this->manifest.main.rfind(".");
         auto module_name     = this->manifest.main.substr(0, separator_index);
         auto class_name      = this->manifest.main.substr(separator_index + 1);
 
-        std::ostringstream import_code;
-        import_code << "import \"" << module_name << "\"";
-        auto interpret_result = wrenInterpret(this->vm, "_init", import_code.str().c_str());
+        // Then run the prelude with the main class
+        std::ostringstream exec_prelude_code;
+        exec_prelude_code << "import \"tea/prelude\" for Prelude\n";
+        exec_prelude_code << "import \"" << module_name << "\" for " << class_name << "\n";
+        exec_prelude_code << "Prelude.run(" << class_name << ")";
+
+        auto interpret_result = wrenInterpret(this->vm, "_init", exec_prelude_code.str().c_str());
         if (interpret_result != WrenInterpretResult::WREN_RESULT_SUCCESS) {
             exit(1);
         }
 
+        // Then get a reusable call handle for Prelude::update that we can use
         wrenEnsureSlots(this->vm, 1);
-        wrenGetVariable(this->vm, module_name.c_str(), class_name.c_str(), 0);
+        wrenGetVariable(this->vm, "tea/prelude", "Prelude", 0);
+        this->prelude_class_handle         = wrenGetSlotHandle(this->vm, 0);
+        this->prelude_update_method_handle = wrenMakeCallHandle(this->vm, "update(_)");
 
-        bool quit = false;
+        bool     quit        = false;
+        uint64_t last_update = SDL_GetPerformanceCounter();
+
         while (!quit) {
             SDL_Event e;
             while (SDL_PollEvent(&e) != 0) {
@@ -138,6 +148,17 @@ namespace Tea {
                     quit = true;
                 }
             }
+
+            // Calculate delta time
+            uint64_t this_update = SDL_GetPerformanceCounter();
+            double   delta       = (double)((this_update - last_update)) / (double)SDL_GetPerformanceFrequency();
+            last_update          = this_update;
+
+            // Call the update method in Prelude
+            wrenEnsureSlots(this->vm, 2);
+            wrenSetSlotHandle(this->vm, 0, this->prelude_class_handle);
+            wrenSetSlotDouble(this->vm, 1, delta);
+            wrenCall(this->vm, this->prelude_update_method_handle);
 
             SDL_UpdateWindowSurface(this->window);
         }

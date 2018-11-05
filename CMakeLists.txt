@@ -33,15 +33,21 @@ target_include_directories(wren BEFORE PUBLIC deps/wren/src/include)  # BEFORE t
 add_library(tinytoml INTERFACE)
 target_include_directories(tinytoml INTERFACE deps/tinytoml/include)
 
+# Resources
+include(deps/cmrc/CMakeRC.cmake)
+cmrc_add_resource_library(tea-res NAMESPACE tea WHENCE res/
+	res/tea/prelude.wren
+)
+
 # Engine
-set(ENGINE_SOURCES
+set(ENGINE_SOURCES 
 	src/assets.cpp
 	src/engine.cpp
 	src/main.cpp
 )
 
 add_executable(tea ${ENGINE_SOURCES})
-target_link_libraries(tea wren tinytoml SDL2-static)
+target_link_libraries(tea tea-res wren tinytoml SDL2-static)
 if (MSVC)
 	target_compile_options(tea PRIVATE /W4 /Wx)
 else ()

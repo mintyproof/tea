@@ -4,7 +4,8 @@
 
 #include "assets.h"
 
-typedef struct WrenVM WrenVM;
+typedef struct WrenVM     WrenVM;
+typedef struct WrenHandle WrenHandle;
 
 namespace Tea {
     struct EngineManifest {
@@ -23,6 +24,9 @@ namespace Tea {
     private:
         SDL_Window* window;
         WrenVM*     vm;
+
+        WrenHandle* prelude_class_handle;
+        WrenHandle* prelude_update_method_handle;
 
         AssetManager   assets;
         EngineManifest manifest;

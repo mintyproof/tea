@@ -10,3 +10,6 @@
 [submodule "deps/tinytoml"]
 	path = deps/tinytoml
 	url = https://github.com/mayah/tinytoml
+[submodule "deps/cmrc"]
+	path = deps/cmrc
+	url = https://github.com/vector-of-bool/cmrc
