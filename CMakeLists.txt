@@ -35,6 +35,7 @@ target_include_directories(tinytoml INTERFACE deps/tinytoml/include)
 
 # Engine
 set(ENGINE_SOURCES
+	src/assets.cpp
 	src/engine.cpp
 	src/main.cpp
 )
@@ -44,5 +45,5 @@ target_link_libraries(tea wren tinytoml SDL2-static)
 if (MSVC)
 	target_compile_options(tea PRIVATE /W4 /Wx)
 else ()
-	target_compile_options(tea PRIVATE -Wall -Wextra -pedantic -Werror -Wno-error=unused)
+	target_compile_options(tea PRIVATE -Wall -Wextra -pedantic -Werror -Wno-error=unused-parameter)
 endif ()

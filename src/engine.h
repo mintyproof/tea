@@ -1,7 +1,10 @@
 #include <memory>
 
 #include <SDL.h>
-#include <wren.hpp>
+
+#include "assets.h"
+
+typedef struct WrenVM WrenVM;
 
 namespace Tea {
     struct EngineManifest {
@@ -13,11 +16,15 @@ namespace Tea {
         ~Engine();
         static std::unique_ptr<Engine> init();
 
+        AssetManager& get_assets();
+
         int run();
 
     private:
-        SDL_Window*    window;
-        WrenVM*        vm;
+        SDL_Window* window;
+        WrenVM*     vm;
+
+        AssetManager   assets;
         EngineManifest manifest;
     };
 }

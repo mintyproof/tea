@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <toml/toml.h>
 
+#include <cstring>
 #include <iostream>
 #include <wren.hpp>
 
@@ -50,27 +51,38 @@ namespace Tea {
         return window;
     }
 
-    void wren_stdout(WrenVM* vm, const char* text) {
-        std::cout << text;
-        std::flush(std::cout);
-    }
+    void wren_stdout(WrenVM* vm, const char* text) { std::cout << text << std::flush; }
 
     void wren_error(WrenVM* vm, WrenErrorType type, const char* module, int line, const char* message) {
         if (type == WrenErrorType::WREN_ERROR_COMPILE) {
-            std::cerr << "Compilation error (" << module << "@" << line << "): " << message;
+            std::cerr << "Compilation error (" << module << "@" << line << "): " << message << std::endl;
         } else if (type == WrenErrorType::WREN_ERROR_RUNTIME) {
-            std::cerr << "Runtime error (" << module << "@" << line << "): " << message;
+            std::cerr << "Runtime error: " << message << std::endl;
         } else if (type == WrenErrorType::WREN_ERROR_STACK_TRACE) {
-            std::cerr << "\tat " << module << "@" << line << ": " << message;
+            std::cerr << "    at " << module << "@" << line << ": " << message << std::endl;
         }
+    }
+
+    char* wren_load_module(WrenVM* vm, const char* name) {
+        std::ostringstream filename;
+        filename << name << ".wren";
+
+        auto engine = static_cast<Engine*>(wrenGetUserData(vm));
+        auto asset  = engine->get_assets().find_asset(filename.str());
+
+        if (asset == nullptr) return nullptr;
+
+        // Using raw C-style memory management here to make sure Wren can take ownership
+        return strndup(reinterpret_cast<const char*>(&asset->get_data().front()), asset->get_data().size());
     }
 
     WrenVM* init_wren() {
         WrenConfiguration config;
         wrenInitConfiguration(&config);
         // TODO: set up VM hooks and whatnot
-        config.writeFn = &wren_stdout;
-        config.errorFn = &wren_error;
+        config.writeFn      = &wren_stdout;
+        config.errorFn      = &wren_error;
+        config.loadModuleFn = &wren_load_module;
 
         WrenVM* vm = wrenNewVM(&config);
         return vm;
@@ -99,8 +111,24 @@ namespace Tea {
         return engine;
     }
 
+    AssetManager& Engine::get_assets() { return this->assets; }
+
     int Engine::run() {
         std::cout << "Starting up." << std::endl;
+
+        auto separator_index = this->manifest.main.rfind(".");
+        auto module_name     = this->manifest.main.substr(0, separator_index);
+        auto class_name      = this->manifest.main.substr(separator_index + 1);
+
+        std::ostringstream import_code;
+        import_code << "import \"" << module_name << "\"";
+        auto interpret_result = wrenInterpret(this->vm, "_init", import_code.str().c_str());
+        if (interpret_result != WrenInterpretResult::WREN_RESULT_SUCCESS) {
+            exit(1);
+        }
+
+        wrenEnsureSlots(this->vm, 1);
+        wrenGetVariable(this->vm, module_name.c_str(), class_name.c_str(), 0);
 
         bool quit = false;
         while (!quit) {
