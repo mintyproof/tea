@@ -5,6 +5,5 @@ class Prelude {
 
     static update(delta) {
         __mainClassInstance.update(delta)
-        System.print("Updating with delta: %(delta)")
     }
 }
