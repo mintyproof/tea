@@ -49,7 +49,7 @@ set(ENGINE_SOURCES
 add_executable(tea ${ENGINE_SOURCES})
 target_link_libraries(tea tea-res wren tinytoml SDL2-static)
 if (MSVC)
-	target_compile_options(tea PRIVATE /W4 /WX)
+	target_compile_options(tea PRIVATE /W4 /WX /D _CRT_SECURE_NO_WARNINGS)
 else ()
 	target_compile_options(tea PRIVATE -Wall -Wextra -pedantic -Werror -Wno-error=unused-parameter)
 endif ()
