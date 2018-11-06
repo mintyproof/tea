@@ -39,21 +39,21 @@ namespace Tea {
         SDL_Window* window = SDL_CreateWindow(
             "Test Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_SHOWN);
 
-        if (window == nullptr) {
+        if (window == NULL) {
             std::cerr << "Error initializing creating SDL window: " << SDL_GetError() << std::endl;
             exit(1);
         }
 
         // Draw to fill the framebuffer, just once
         SDL_Surface* surf = SDL_GetWindowSurface(window);
-        SDL_FillRect(surf, nullptr, SDL_MapRGB(surf->format, 255, 0, 0));
+        SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, 255, 0, 0));
 
         return window;
     }
 
-    void wren_stdout(WrenVM* vm, const char* text) { std::cout << text << std::flush; }
+    void wren_stdout(WrenVM*, const char* text) { std::cout << text << std::flush; }
 
-    void wren_error(WrenVM* vm, WrenErrorType type, const char* module, int line, const char* message) {
+    void wren_error(WrenVM*, WrenErrorType type, const char* module, int line, const char* message) {
         if (type == WrenErrorType::WREN_ERROR_COMPILE) {
             std::cerr << "Compilation error (" << module << "@" << line << "): " << message << std::endl;
         } else if (type == WrenErrorType::WREN_ERROR_RUNTIME) {
@@ -73,7 +73,11 @@ namespace Tea {
         if (asset == nullptr) return nullptr;
 
         // Using raw C-style memory management here to make sure Wren can take ownership
-        return strndup(reinterpret_cast<const char*>(&asset->get_data().front()), asset->get_data().size());
+        size_t size = asset->get_data().size();
+        char*  data = static_cast<char*>(malloc(size + 1));
+        data[size]  = '\0';
+        memcpy(data, reinterpret_cast<const char*>(&asset->get_data().front()), size);
+        return data;
     }
 
     WrenVM* init_wren() {
@@ -117,7 +121,7 @@ namespace Tea {
         std::cout << "Starting up." << std::endl;
 
         // First find the main module specificed in the manifest
-        auto separator_index = this->manifest.main.rfind('.');
+        auto separator_index = this->manifest.main.rfind(".");
         auto module_name     = this->manifest.main.substr(0, separator_index);
         auto class_name      = this->manifest.main.substr(separator_index + 1);
 
