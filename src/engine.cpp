@@ -39,14 +39,14 @@ namespace Tea {
         SDL_Window* window = SDL_CreateWindow(
             "Test Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_SHOWN);
 
-        if (window == NULL) {
+        if (window == nullptr) {
             std::cerr << "Error initializing creating SDL window: " << SDL_GetError() << std::endl;
             exit(1);
         }
 
         // Draw to fill the framebuffer, just once
         SDL_Surface* surf = SDL_GetWindowSurface(window);
-        SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, 255, 0, 0));
+        SDL_FillRect(surf, nullptr, SDL_MapRGB(surf->format, 255, 0, 0));
 
         return window;
     }
@@ -117,7 +117,7 @@ namespace Tea {
         std::cout << "Starting up." << std::endl;
 
         // First find the main module specificed in the manifest
-        auto separator_index = this->manifest.main.rfind(".");
+        auto separator_index = this->manifest.main.rfind('.');
         auto module_name     = this->manifest.main.substr(0, separator_index);
         auto class_name      = this->manifest.main.substr(separator_index + 1);
 

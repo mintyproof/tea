@@ -2,16 +2,17 @@
 
 #include <fstream>
 #include <iostream>
+#include <utility>
 
 #include <cmrc/cmrc.hpp>
 CMRC_DECLARE(tea);
 
 namespace Tea {
-    Asset::Asset(std::vector<uint8_t> data): data(data) {}
+    Asset::Asset(std::vector<uint8_t> data): data(std::move(data)) {}
     std::vector<uint8_t>& Asset::get_data() { return *&this->data; }
 
-    AssetManager::AssetManager() {}
-    AssetManager::~AssetManager() {}
+    AssetManager::AssetManager() = default;
+    AssetManager::~AssetManager() = default;
 
     Asset* AssetManager::find_asset(std::string name) {
         // Check open file cache
