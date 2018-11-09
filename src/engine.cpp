@@ -1,11 +1,12 @@
 #include "engine.h"
 
 #include <SDL.h>
+#include <glad/glad.h>
 #include <toml/toml.h>
+#include <wren.hpp>
 
 #include <cstring>
 #include <iostream>
-#include <wren.hpp>
 
 namespace Tea {
     EngineManifest load_manifest() {
@@ -30,25 +31,34 @@ namespace Tea {
         }
     }
 
-    SDL_Window* init_sdl() {
+    void Engine::init_sdl() {
         if (SDL_Init(SDL_INIT_VIDEO) < 0) {
             std::cerr << "Error initializing SDL: " << SDL_GetError() << std::endl;
             exit(1);
         }
 
-        SDL_Window* window = SDL_CreateWindow(
-            "Test Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_SHOWN);
+        this->window = SDL_CreateWindow("Test Engine",
+                                        SDL_WINDOWPOS_UNDEFINED,
+                                        SDL_WINDOWPOS_UNDEFINED,
+                                        640,
+                                        480,
+                                        SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
-        if (window == NULL) {
-            std::cerr << "Error initializing creating SDL window: " << SDL_GetError() << std::endl;
+        if (this->window == NULL) {
+            std::cerr << "Error creating SDL window: " << SDL_GetError() << std::endl;
             exit(1);
         }
+
+        this->gl_context = SDL_GL_CreateContext(this->window);
+        if (this->gl_context == nullptr) {
+            std::cerr << "Error creating OpenGL context: " << SDL_GetError() << std::endl;
+            exit(1);
+        }
+        gladLoadGLES2Loader(SDL_GL_GetProcAddress);
 
         // Draw to fill the framebuffer, just once
         SDL_Surface* surf = SDL_GetWindowSurface(window);
         SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, 255, 0, 0));
-
-        return window;
     }
 
     void wren_stdout(WrenVM*, const char* text) { std::cout << text << std::flush; }
@@ -80,34 +90,41 @@ namespace Tea {
         return data;
     }
 
+    WrenForeignMethodFn wren_bind_foreign_fn(WrenVM*     vm,
+                                             const char* module,
+                                             const char* className,
+                                             bool        isStatic,
+                                             const char* signature) {
+        auto engine = static_cast<Engine*>(wrenGetUserData(vm));
+        return engine->get_binder().resolve_function(isStatic, module, className, signature);
+    }
+
     WrenVM* init_wren() {
         WrenConfiguration config;
         wrenInitConfiguration(&config);
         // TODO: set up VM hooks and whatnot
-        config.writeFn      = &wren_stdout;
-        config.errorFn      = &wren_error;
-        config.loadModuleFn = &wren_load_module;
+        config.writeFn             = &wren_stdout;
+        config.errorFn             = &wren_error;
+        config.loadModuleFn        = &wren_load_module;
+        config.bindForeignMethodFn = &wren_bind_foreign_fn;
 
         WrenVM* vm = wrenNewVM(&config);
         return vm;
     }
 
     std::unique_ptr<Engine> Engine::init() {
-        std::cout << "Initializing engine:" << std::endl;
+        std::cout << "Initializing engine.." << std::endl;
 
-        std::cout << "| Initializing SDL" << std::endl;
-        auto window = init_sdl();
-
-        std::cout << "| Initializing VM state" << std::endl;
         auto vm = init_wren();
-
-        std::cout << "| Loading manifest" << std::endl;
         auto mf = load_manifest();
 
         std::unique_ptr<Engine> engine(new Engine());
-        engine->window   = window;
         engine->vm       = vm;
         engine->manifest = mf;
+
+        engine->init_sdl();
+
+        Renderer::bind(engine->binder);
 
         // Now that we have a persistent pointer to Engine, set it as the Wren userdata
         // So the scripting stuff can access the rest of the engine
@@ -115,7 +132,8 @@ namespace Tea {
         return engine;
     }
 
-    AssetManager& Engine::get_assets() { return this->assets; }
+    AssetManager&    Engine::get_assets() { return this->assets; }
+    ScriptingBinder& Engine::get_binder() { return this->binder; }
 
     int Engine::run() {
         std::cout << "Starting up." << std::endl;

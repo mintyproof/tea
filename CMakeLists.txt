@@ -11,6 +11,10 @@ set (ALLOW_DUPLICATE_CUSTOM_TARGETS ON)
 # SDL
 add_subdirectory(deps/sdl)
 
+# Glad
+add_library(glad deps/glad/src/glad.c)
+target_include_directories(glad PUBLIC deps/glad/include)
+
 # Wren
 set(WREN_SOURCES
 	deps/wren/src/vm/wren_compiler.c
@@ -44,10 +48,12 @@ set(ENGINE_SOURCES
 	src/assets.cpp
 	src/engine.cpp
 	src/main.cpp
+	src/renderer.cpp
+	src/utils.cpp
 )
 
 add_executable(tea ${ENGINE_SOURCES})
-target_link_libraries(tea tea-res wren tinytoml SDL2-static)
+target_link_libraries(tea tea-res wren tinytoml SDL2-static glad)
 if (MSVC)
 	target_compile_options(tea PRIVATE /W4 /WX /D _CRT_SECURE_NO_WARNINGS)
 else ()
