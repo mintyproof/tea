@@ -1,4 +1,4 @@
-#include "sdl.h"
+#include "platform_sdl.h"
 
 #include <iostream>
 

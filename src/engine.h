@@ -1,7 +1,7 @@
 #include <memory>
 
 #include "assets.h"
-#include "platform/platform.h"
+#include "platform.h"
 #include "renderer.h"
 #include "utils.h"
 
