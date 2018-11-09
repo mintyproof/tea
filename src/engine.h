@@ -1,6 +1,7 @@
 #include <memory>
 
 #include "assets.h"
+#include "platform/platform.h"
 #include "renderer.h"
 #include "utils.h"
 
@@ -25,10 +26,7 @@ namespace Tea {
         int run();
 
     private:
-        void init_sdl();
-
-        SDL_Window*   window;
-        SDL_GLContext gl_context;
+        std::unique_ptr<Platform> platform;
 
         WrenVM*         vm;
         WrenHandle*     prelude_class_handle;

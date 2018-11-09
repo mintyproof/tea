@@ -1,7 +1,5 @@
 #include "engine.h"
 
-#include <SDL.h>
-#include <glad/glad.h>
 #include <toml/toml.h>
 #include <wren.hpp>
 
@@ -29,36 +27,6 @@ namespace Tea {
             std::cerr << "Manifest did not declare app.main key." << std::endl;
             exit(1);
         }
-    }
-
-    void Engine::init_sdl() {
-        if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-            std::cerr << "Error initializing SDL: " << SDL_GetError() << std::endl;
-            exit(1);
-        }
-
-        this->window = SDL_CreateWindow("Test Engine",
-                                        SDL_WINDOWPOS_UNDEFINED,
-                                        SDL_WINDOWPOS_UNDEFINED,
-                                        640,
-                                        480,
-                                        SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-
-        if (this->window == NULL) {
-            std::cerr << "Error creating SDL window: " << SDL_GetError() << std::endl;
-            exit(1);
-        }
-
-        this->gl_context = SDL_GL_CreateContext(this->window);
-        if (this->gl_context == nullptr) {
-            std::cerr << "Error creating OpenGL context: " << SDL_GetError() << std::endl;
-            exit(1);
-        }
-        gladLoadGLES2Loader(SDL_GL_GetProcAddress);
-
-        // Draw to fill the framebuffer, just once
-        SDL_Surface* surf = SDL_GetWindowSurface(window);
-        SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, 255, 0, 0));
     }
 
     void wren_stdout(WrenVM*, const char* text) { std::cout << text << std::flush; }
@@ -121,8 +89,7 @@ namespace Tea {
         std::unique_ptr<Engine> engine(new Engine());
         engine->vm       = vm;
         engine->manifest = mf;
-
-        engine->init_sdl();
+        engine->platform = std::unique_ptr<Platform>(new Platform());
 
         Renderer::bind(engine->binder);
 
@@ -160,30 +127,13 @@ namespace Tea {
         this->prelude_class_handle         = wrenGetSlotHandle(this->vm, 0);
         this->prelude_update_method_handle = wrenMakeCallHandle(this->vm, "update(_)");
 
-        bool     quit        = false;
-        uint64_t last_update = SDL_GetPerformanceCounter();
-
-        while (!quit) {
-            SDL_Event e;
-            while (SDL_PollEvent(&e) != 0) {
-                if (e.type == SDL_QUIT) {
-                    quit = true;
-                }
-            }
-
-            // Calculate delta time
-            uint64_t this_update = SDL_GetPerformanceCounter();
-            double   delta       = (double)((this_update - last_update)) / (double)SDL_GetPerformanceFrequency();
-            last_update          = this_update;
-
+        this->platform->main_loop([this](double delta) {
             // Call the update method in Prelude
             wrenEnsureSlots(this->vm, 2);
             wrenSetSlotHandle(this->vm, 0, this->prelude_class_handle);
             wrenSetSlotDouble(this->vm, 1, delta);
             wrenCall(this->vm, this->prelude_update_method_handle);
-
-            SDL_UpdateWindowSurface(this->window);
-        }
+        });
 
         return 0;
     }
@@ -192,9 +142,6 @@ namespace Tea {
         std::cout << "Quitting engine:" << std::endl;
         std::cout << "| Freeing memory" << std::endl;
         wrenFreeVM(this->vm);
-
-        SDL_DestroyWindow(this->window);
-        SDL_Quit();
 
         std::cout << "Bye." << std::endl;
     }

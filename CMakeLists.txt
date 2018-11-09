@@ -45,6 +45,7 @@ cmrc_add_resource_library(tea-res NAMESPACE tea WHENCE res/
 
 # Engine
 set(ENGINE_SOURCES 
+	src/platform/sdl.cpp
 	src/assets.cpp
 	src/engine.cpp
 	src/main.cpp
