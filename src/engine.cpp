@@ -92,6 +92,7 @@ namespace Tea {
         engine->platform = std::unique_ptr<Platform>(new Platform());
 
         Renderer::bind(engine->binder);
+        engine->renderer.init();
 
         // Now that we have a persistent pointer to Engine, set it as the Wren userdata
         // So the scripting stuff can access the rest of the engine
@@ -101,6 +102,8 @@ namespace Tea {
 
     AssetManager&    Engine::get_assets() { return this->assets; }
     ScriptingBinder& Engine::get_binder() { return this->binder; }
+    Platform&        Engine::get_platform() { return *(this->platform); }
+    Renderer&        Engine::get_renderer() { return this->renderer; }
 
     int Engine::run() {
         std::cout << "Starting up." << std::endl;
@@ -133,10 +136,16 @@ namespace Tea {
             wrenSetSlotHandle(this->vm, 0, this->prelude_class_handle);
             wrenSetSlotDouble(this->vm, 1, delta);
             wrenCall(this->vm, this->prelude_update_method_handle);
+
+            this->get_renderer().begin();
+            this->get_renderer().rect(10, 10, 50, 50, 0x00, 0xff, 0xff, 0xff);
+            this->get_renderer().flush();
         });
 
         return 0;
     }
+
+    Engine::Engine(): renderer(Renderer(*this)) {}
 
     Engine::~Engine() {
         std::cout << "Quitting engine:" << std::endl;

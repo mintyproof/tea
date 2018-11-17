@@ -6,6 +6,10 @@
 
 namespace Tea {
     PlatformGraphics::PlatformGraphics(Platform& platform): platform(platform) {
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+
         this->gl = SDL_GL_CreateContext(this->platform.window);
         if (this->gl == nullptr) {
             std::cerr << "Error creating OpenGL context: " << SDL_GetError() << std::endl;
@@ -13,13 +17,21 @@ namespace Tea {
         }
 
         gladLoadGLES2Loader(SDL_GL_GetProcAddress);
-
-        // Draw to fill the framebuffer, just once
-        SDL_Surface* surf = SDL_GetWindowSurface(this->platform.window);
-        SDL_FillRect(surf, NULL, SDL_MapRGB(surf->format, 255, 0, 0));
     }
 
     PlatformGraphics::~PlatformGraphics() {}
+
+    uint32_t PlatformGraphics::get_width() {
+        int w, h;
+        SDL_GetWindowSize(this->platform.window, &w, &h);
+        return static_cast<uint32_t>(w);
+    }
+
+    uint32_t PlatformGraphics::get_height() {
+        int w, h;
+        SDL_GetWindowSize(this->platform.window, &w, &h);
+        return static_cast<uint32_t>(h);
+    }
 
     PlatformInput::PlatformInput(Platform& platform): platform(platform) {}
     PlatformInput::~PlatformInput() {}
@@ -73,7 +85,7 @@ namespace Tea {
 
             update_function(delta);
 
-            SDL_UpdateWindowSurface(this->window);
+            SDL_GL_SwapWindow(this->window);
         }
     }
 }

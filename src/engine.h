@@ -17,11 +17,14 @@ namespace Tea {
 
     class Engine {
     public:
+        Engine();
         ~Engine();
         static std::unique_ptr<Engine> init();
 
         AssetManager&    get_assets();
         ScriptingBinder& get_binder();
+        Platform&        get_platform();
+        Renderer&        get_renderer();
 
         int run();
 
