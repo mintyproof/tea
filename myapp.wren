@@ -1,13 +1,10 @@
-System.print("Hello world!")
+import "tea/graphics" for Graphics
 
 class Main {
     construct init() {
-        System.print("Initializing...")
-        _calls = 0
     }
 
     update(delta) {
-        _calls = _calls + 1
-        System.print("Updating (%(_calls) update calls)")
+        Graphics.rect(10, 10, 50, 50, 0x00ff00ff)
     }
 }

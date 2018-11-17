@@ -131,14 +131,14 @@ namespace Tea {
         this->prelude_update_method_handle = wrenMakeCallHandle(this->vm, "update(_)");
 
         this->platform->main_loop([this](double delta) {
+            this->get_renderer().begin();
+
             // Call the update method in Prelude
             wrenEnsureSlots(this->vm, 2);
             wrenSetSlotHandle(this->vm, 0, this->prelude_class_handle);
             wrenSetSlotDouble(this->vm, 1, delta);
             wrenCall(this->vm, this->prelude_update_method_handle);
 
-            this->get_renderer().begin();
-            this->get_renderer().rect(10, 10, 50, 50, 0x00, 0xff, 0xff, 0xff);
             this->get_renderer().flush();
         });
 

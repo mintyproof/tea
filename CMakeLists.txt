@@ -40,6 +40,7 @@ target_include_directories(tinytoml INTERFACE deps/tinytoml/include)
 # Resources
 include(deps/cmrc/CMakeRC.cmake)
 cmrc_add_resource_library(tea-res NAMESPACE tea WHENCE res/
+	res/tea/graphics.wren
 	res/tea/prelude.wren
 )
 

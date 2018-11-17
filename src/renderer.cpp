@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include <glad/glad.h>
+#include <wren.hpp>
 
 #include "engine.h"
 
@@ -116,7 +117,23 @@ namespace Tea {
         this->screen_size_uniform = glGetUniformLocation(this->program, "u_screen_size");
     }
 
-    void Renderer::bind(Tea::ScriptingBinder& binder) {}
+    void Renderer::bind(Tea::ScriptingBinder& binder) {
+        binder.bind_method("static tea/graphics::Graphics::rect(_,_,_,_,_)", [](WrenVM* vm) {
+            auto     engine = static_cast<Engine*>(wrenGetUserData(vm));
+            double   x      = wrenGetSlotDouble(vm, 1);
+            double   y      = wrenGetSlotDouble(vm, 2);
+            double   w      = wrenGetSlotDouble(vm, 3);
+            double   h      = wrenGetSlotDouble(vm, 4);
+            uint32_t color  = static_cast<uint32_t>(wrenGetSlotDouble(vm, 5));
+
+            uint8_t r = color >> 24;
+            uint8_t g = (color >> 16) & 0xff;
+            uint8_t b = (color >> 8) & 0xff;
+            uint8_t a = color & 0xff;
+
+            engine->get_renderer().rect(x, y, w, h, r, g, b, a);
+        });
+    }
 
     void Renderer::begin() {
         glClearColor(0, 0, 0, 1);
