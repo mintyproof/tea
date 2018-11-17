@@ -45,17 +45,6 @@ static auto fragment_shader_source = R"glsl(
 )glsl";
 
 namespace Tea {
-    Renderer::Renderer(Engine& engine): engine(engine) {}
-
-    Renderer::~Renderer() {
-        glDeleteBuffers(1, &this->vbo);
-        glDetachShader(this->program, this->vertex_shader);
-        glDetachShader(this->program, this->fragment_shader);
-        glDeleteProgram(this->program);
-        glDeleteShader(this->vertex_shader);
-        glDeleteShader(this->fragment_shader);
-    }
-
     bool get_shader_compile_error(GLuint shader, std::string& error) {
         GLint status;
         glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
@@ -68,6 +57,17 @@ namespace Tea {
         error.resize(length);
         glGetShaderInfoLog(shader, length, nullptr, &error.front());
         return true;
+    }
+
+    Renderer::Renderer(Engine& engine): engine(engine) {}
+
+    Renderer::~Renderer() {
+        glDeleteBuffers(1, &this->vbo);
+        glDetachShader(this->program, this->vertex_shader);
+        glDetachShader(this->program, this->fragment_shader);
+        glDeleteProgram(this->program);
+        glDeleteShader(this->vertex_shader);
+        glDeleteShader(this->fragment_shader);
     }
 
     void Renderer::init() {

@@ -80,6 +80,16 @@ namespace Tea {
         return vm;
     }
 
+    Engine::Engine(): renderer(Renderer(*this)) {}
+
+    Engine::~Engine() {
+        std::cout << "Quitting engine:" << std::endl;
+        std::cout << "| Freeing memory" << std::endl;
+        wrenFreeVM(this->vm);
+
+        std::cout << "Bye." << std::endl;
+    }
+
     std::unique_ptr<Engine> Engine::init() {
         std::cout << "Initializing engine.." << std::endl;
 
@@ -143,15 +153,5 @@ namespace Tea {
         });
 
         return 0;
-    }
-
-    Engine::Engine(): renderer(Renderer(*this)) {}
-
-    Engine::~Engine() {
-        std::cout << "Quitting engine:" << std::endl;
-        std::cout << "| Freeing memory" << std::endl;
-        wrenFreeVM(this->vm);
-
-        std::cout << "Bye." << std::endl;
     }
 }
