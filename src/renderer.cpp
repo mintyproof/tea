@@ -2,7 +2,9 @@
 
 #include <iostream>
 
+#define STB_IMAGE_IMPLEMENTATION
 #include <glad/glad.h>
+#include <stb_image.h>
 #include <wren.hpp>
 
 #include "engine.h"
@@ -39,12 +41,53 @@ static auto fragment_shader_source = R"glsl(
 
     out vec4 out_color;
 
+    uniform sampler2D u_texture;
+
     void main() {
-        out_color = f_color;
+        out_color = texture(u_texture, f_uv) * f_color;
     }
 )glsl";
 
 namespace Tea {
+    std::shared_ptr<Texture> Texture::load(Asset& asset) {
+        int w, h, channels_in_file;
+
+        stbi_set_flip_vertically_on_load(true);
+        uint8_t* c_data =
+            stbi_load_from_memory(&asset.get_data().front(), asset.get_data().size(), &w, &h, &channels_in_file, 4);
+        if (c_data == nullptr) {
+            std::cerr << "Error loading image." << std::endl;
+        }
+
+        std::vector<uint8_t> data(c_data, c_data + (w * h * 4));
+
+        stbi_image_free(c_data);
+        return Texture::create(data, w, h);
+    }
+
+    std::shared_ptr<Texture> Texture::create(std::vector<uint8_t>& data, uint32_t width, uint32_t height) {
+        std::shared_ptr<Texture> tex(new Texture());
+
+        glGenTextures(1, &tex->tex);
+        glBindTexture(GL_TEXTURE_2D, tex->tex);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data.front());
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        tex->width  = width;
+        tex->height = height;
+        return tex;
+    }
+
+    Texture::~Texture() { glDeleteTextures(1, &this->tex); }
+
+    uint32_t Texture::get_width() { return this->width; }
+    uint32_t Texture::get_height() { return this->height; }
+    GLuint   Texture::get_gl_texture() { return this->tex; }
+
     bool get_shader_compile_error(GLuint shader, std::string& error) {
         GLint status;
         glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
@@ -101,9 +144,15 @@ namespace Tea {
         glUseProgram(this->program);
 
         GLint posAttrib   = glGetAttribLocation(this->program, "v_position");
+        GLint uvAttrib    = glGetAttribLocation(this->program, "v_uv");
         GLint colorAttrib = glGetAttribLocation(this->program, "v_color");
+
         glVertexAttribPointer(
             posAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, x)));
+
+        glVertexAttribPointer(
+            uvAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, u)));
+
         glVertexAttribPointer(colorAttrib,
                               4,
                               GL_UNSIGNED_BYTE,
@@ -112,9 +161,14 @@ namespace Tea {
                               reinterpret_cast<const void*>(offsetof(Vertex, rgba)));
 
         glEnableVertexAttribArray(posAttrib);
+        glEnableVertexAttribArray(uvAttrib);
         glEnableVertexAttribArray(colorAttrib);
 
         this->screen_size_uniform = glGetUniformLocation(this->program, "u_screen_size");
+
+        std::vector<uint8_t> pixel_data = {255, 255, 255, 255};
+        this->pixel_texture             = Texture::create(pixel_data, 1, 1);
+        this->current_texture           = this->pixel_texture;
     }
 
     void Renderer::bind(Tea::ScriptingBinder& binder) {
@@ -133,6 +187,40 @@ namespace Tea {
 
             engine->get_renderer().rect(x, y, w, h, r, g, b, a);
         });
+
+        binder.bind_method("static tea/graphics::Graphics::setTexture(_)", [](WrenVM* vm) {
+            auto engine = static_cast<Engine*>(wrenGetUserData(vm));
+            auto ptr    = reinterpret_cast<std::shared_ptr<Texture>*>(wrenGetSlotForeign(vm, 1));
+
+            engine->get_renderer().set_texture(*ptr);
+        });
+
+        binder.bind_method("static tea/graphics::Texture::load(_)", [](WrenVM* vm) {
+            auto engine = static_cast<Engine*>(wrenGetUserData(vm));
+
+            std::string filename(wrenGetSlotString(vm, 1));
+
+            auto file = engine->get_assets().find_asset(filename);
+            if (file == nullptr) {
+                wrenSetSlotString(vm, 0, "Could not find file.");
+                wrenAbortFiber(vm, 0);
+                return;
+            }
+
+            auto ptr = reinterpret_cast<std::shared_ptr<Texture>*>(
+                wrenSetSlotNewForeign(vm, 0, 0, sizeof(std::shared_ptr<Texture>)));
+            *ptr = Texture::load(*file);
+        });
+
+        binder.bind_method("tea/graphics::Texture::width", [](WrenVM* vm) {
+            auto ptr = reinterpret_cast<std::shared_ptr<Texture>*>(wrenGetSlotForeign(vm, 0));
+            wrenSetSlotDouble(vm, 0, static_cast<double>(ptr->get()->get_width()));
+        });
+
+        binder.bind_method("tea/graphics::Texture::height", [](WrenVM* vm) {
+            auto ptr = reinterpret_cast<std::shared_ptr<Texture>*>(wrenGetSlotForeign(vm, 0));
+            wrenSetSlotDouble(vm, 0, static_cast<double>(ptr->get()->get_height()));
+        });
     }
 
     void Renderer::begin() {
@@ -149,21 +237,25 @@ namespace Tea {
         auto graphics = this->engine.get_platform().get_graphics();
         glUniform2f(this->screen_size_uniform, graphics.get_width(), graphics.get_height());
 
+        glBindTexture(GL_TEXTURE_2D, this->current_texture->get_gl_texture());
+
         glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), &vertices.front(), GL_STREAM_DRAW);
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-
-        GLint error;
-        if ((error = glGetError()) != GL_NO_ERROR) std::cerr << "GL error: " << error << std::endl;
 
         vertices.resize(0);
     }
 
+    void Renderer::set_texture(std::shared_ptr<Texture>& tex) {
+        if (this->current_texture->get_gl_texture() != tex->get_gl_texture() && this->vertices.size() > 0) flush();
+        this->current_texture = tex;
+    }
+
     void Renderer::rect(float x, float y, float w, float h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
         this->push_vertex({x, y, 0, 0, {r, g, b, a}});
-        this->push_vertex({x + w, y, 0, 0, {r, g, b, a}});
-        this->push_vertex({x, y + h, 0, 0, {r, g, b, a}});
-        this->push_vertex({x, y + h, 0, 0, {r, g, b, a}});
-        this->push_vertex({x + w, y, 0, 0, {r, g, b, a}});
-        this->push_vertex({x + w, y + h, 0, 0, {r, g, b, a}});
+        this->push_vertex({x + w, y, 1, 0, {r, g, b, a}});
+        this->push_vertex({x, y + h, 0, 1, {r, g, b, a}});
+        this->push_vertex({x, y + h, 0, 1, {r, g, b, a}});
+        this->push_vertex({x + w, y, 1, 0, {r, g, b, a}});
+        this->push_vertex({x + w, y + h, 1, 1, {r, g, b, a}});
     }
 }

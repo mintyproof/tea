@@ -5,10 +5,12 @@
 namespace Tea {
     class Asset {
     public:
-        Asset(std::vector<uint8_t> data);
+        Asset(std::string name, std::vector<uint8_t> data);
+        std::string&          get_name();
         std::vector<uint8_t>& get_data();
 
     private:
+        std::string          name;
         std::vector<uint8_t> data;
     };
 

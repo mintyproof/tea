@@ -8,10 +8,10 @@
 CMRC_DECLARE(tea);
 
 namespace Tea {
-    Asset::Asset(std::vector<uint8_t> data): data(std::move(data)) {}
+    Asset::Asset(std::string name, std::vector<uint8_t> data): name(name), data(std::move(data)) {}
     std::vector<uint8_t>& Asset::get_data() { return *&this->data; }
 
-    AssetManager::AssetManager() = default;
+    AssetManager::AssetManager()  = default;
     AssetManager::~AssetManager() = default;
 
     Asset* AssetManager::find_asset(std::string name) {
@@ -26,7 +26,7 @@ namespace Tea {
 
             std::vector<uint8_t> contents(file.begin(), file.end());
 
-            auto inserted_asset = this->loaded_assets.emplace(name, contents);
+            auto inserted_asset = this->loaded_assets.emplace(name, Asset(name, contents));
             return &inserted_asset.first->second;
         }
 
@@ -39,7 +39,7 @@ namespace Tea {
 
         std::vector<uint8_t> contents((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
 
-        auto inserted_asset = this->loaded_assets.emplace(name, contents);
+        auto inserted_asset = this->loaded_assets.emplace(name, Asset(name, contents));
         return &inserted_asset.first->second;
     }
 }

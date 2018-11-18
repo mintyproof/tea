@@ -37,6 +37,10 @@ target_include_directories(wren BEFORE PUBLIC deps/wren/src/include)  # BEFORE t
 add_library(tinytoml INTERFACE)
 target_include_directories(tinytoml INTERFACE deps/tinytoml/include)
 
+# STB
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE deps/stb)
+
 # Resources
 include(deps/cmrc/CMakeRC.cmake)
 cmrc_add_resource_library(tea-res NAMESPACE tea WHENCE res/
@@ -55,7 +59,7 @@ set(ENGINE_SOURCES
 )
 
 add_executable(tea ${ENGINE_SOURCES})
-target_link_libraries(tea tea-res wren tinytoml SDL2-static glad)
+target_link_libraries(tea tea-res wren tinytoml stb SDL2-static glad)
 if (MSVC)
 	target_compile_options(tea PRIVATE /W4 /WX /D _CRT_SECURE_NO_WARNINGS)
 else ()
