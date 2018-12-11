@@ -99,7 +99,7 @@ namespace Tea {
         std::unique_ptr<Engine> engine(new Engine());
         engine->vm       = vm;
         engine->manifest = mf;
-        engine->platform = std::unique_ptr<Platform>(new Platform());
+        engine->platform = Platform::init();
 
         Renderer::bind(engine->binder);
         engine->renderer.init();

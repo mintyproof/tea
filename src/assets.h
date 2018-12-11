@@ -1,3 +1,6 @@
+#ifndef TEA_ASSETS_H
+#define TEA_ASSETS_H
+
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -25,3 +28,5 @@ namespace Tea {
         std::unordered_map<std::string, Asset> loaded_assets;
     };
 }
+
+#endif

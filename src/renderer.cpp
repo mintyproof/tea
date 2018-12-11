@@ -234,7 +234,7 @@ namespace Tea {
     }
 
     void Renderer::flush() {
-        auto graphics = this->engine.get_platform().get_graphics();
+        auto& graphics = this->engine.get_platform().get_graphics();
         glUniform2f(this->screen_size_uniform, graphics.get_width(), graphics.get_height());
 
         glBindTexture(GL_TEXTURE_2D, this->current_texture->get_gl_texture());

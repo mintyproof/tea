@@ -1,3 +1,6 @@
+#ifndef TEA_ENGINE_H
+#define TEA_ENGINE_H
+
 #include <memory>
 
 #include "assets.h"
@@ -41,3 +44,5 @@ namespace Tea {
         EngineManifest manifest;
     };
 }
+
+#endif

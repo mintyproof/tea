@@ -1,3 +1,6 @@
+#ifndef TEA_UTILS_H
+#define TEA_UTILS_H
+
 #include <functional>
 #include <string>
 #include <unordered_map>
@@ -16,3 +19,5 @@ namespace Tea {
         std::unordered_map<std::string, void (*)(WrenVM*)> methods;
     };
 }
+
+#endif

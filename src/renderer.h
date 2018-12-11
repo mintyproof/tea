@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TEA_RENDERER_H
+#define TEA_RENDERER_H
 
 #include <memory>
 #include <string>
@@ -77,3 +78,5 @@ namespace Tea {
         std::vector<Vertex> vertices;
     };
 }
+
+#endif
