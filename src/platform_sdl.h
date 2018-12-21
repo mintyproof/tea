@@ -12,14 +12,16 @@ namespace Tea {
     class PlatformSDL;
 
     class PlatformSDLGraphics: public PlatformGraphics {
+        friend PlatformSDL;
+
     public:
-        PlatformSDLGraphics(PlatformSDL& platform);
+        explicit PlatformSDLGraphics(PlatformSDL& platform);
         ~PlatformSDLGraphics() noexcept override;
 
         uint32_t get_width() const noexcept override;
         uint32_t get_height() const noexcept override;
 
-        void resize(uint32_t width, uint32_t height);
+        void resize(uint32_t width, uint32_t height) override;
 
     private:
         PlatformSDL&  platform;
@@ -27,18 +29,17 @@ namespace Tea {
     };
 
     class PlatformSDLInput: public PlatformInput {
+        friend PlatformSDL;
+
     public:
-        PlatformSDLInput(PlatformSDL& platform);
+        explicit PlatformSDLInput(PlatformSDL& platform);
         ~PlatformSDLInput() noexcept override;
 
-        bool is_key_down(int keycode) const noexcept override;
-        bool is_key_up(int keycode) const noexcept override;
-
-        bool is_key_pressed(int keycode) const noexcept override;
-        bool is_key_released(int keycode) const noexcept override;
+        void set_key_callback(std::function<void(int, KeyState)> cb) noexcept override;
 
     private:
-        Platform& platform;
+        std::function<void(int, KeyState)> key_callback;
+        Platform&                          platform;
     };
 
     class PlatformSDL: public Platform {

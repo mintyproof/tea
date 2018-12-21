@@ -6,7 +6,7 @@
 namespace Tea {
     class PlatformGraphics {
     public:
-        virtual ~PlatformGraphics() noexcept {};
+        virtual ~PlatformGraphics() noexcept = default;
 
         virtual uint32_t get_width() const noexcept  = 0;
         virtual uint32_t get_height() const noexcept = 0;
@@ -16,20 +16,17 @@ namespace Tea {
 
     class PlatformInput {
     public:
-        virtual ~PlatformInput() noexcept {};
+        enum class KeyState { Pressed, Released };
+        virtual ~PlatformInput() noexcept = default;
 
-        virtual bool is_key_down(int keycode) const noexcept = 0;
-        virtual bool is_key_up(int keycode) const noexcept   = 0;
-
-        virtual bool is_key_pressed(int keycode) const noexcept  = 0;
-        virtual bool is_key_released(int keycode) const noexcept = 0;
+        virtual void set_key_callback(std::function<void(int, KeyState)> key_callback) noexcept = 0;
     };
 
     class Platform {
     public:
         static std::unique_ptr<Platform> init();
 
-        virtual ~Platform() noexcept {};
+        virtual ~Platform() noexcept = default;
 
         virtual PlatformGraphics& get_graphics() noexcept = 0;
         virtual PlatformInput&    get_input() noexcept    = 0;

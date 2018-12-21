@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "platform_sdl.h"
 
 #include <iostream>
@@ -19,7 +21,7 @@ namespace Tea {
         gladLoadGLES2Loader(SDL_GL_GetProcAddress);
     }
 
-    PlatformSDLGraphics::~PlatformSDLGraphics() {}
+    PlatformSDLGraphics::~PlatformSDLGraphics() noexcept = default;
 
     void PlatformSDLGraphics::resize(uint32_t width, uint32_t height) {}
 
@@ -35,13 +37,10 @@ namespace Tea {
         return static_cast<uint32_t>(h);
     }
 
-    PlatformSDLInput::PlatformSDLInput(PlatformSDL& platform): platform(platform) {}
-    PlatformSDLInput::~PlatformSDLInput() {}
+    PlatformSDLInput::PlatformSDLInput(PlatformSDL& platform): platform(platform), key_callback([](int, KeyState) {}) {}
+    PlatformSDLInput::~PlatformSDLInput() noexcept = default;
 
-    bool PlatformSDLInput::is_key_down(int keycode) const noexcept { return false; }
-    bool PlatformSDLInput::is_key_up(int keycode) const noexcept { return false; }
-    bool PlatformSDLInput::is_key_pressed(int keycode) const noexcept { return false; }
-    bool PlatformSDLInput::is_key_released(int keycode) const noexcept { return false; }
+    void PlatformSDLInput::set_key_callback(std::function<void(int, KeyState)> cb) noexcept { this->key_callback = cb; }
 
     PlatformSDL::PlatformSDL() {
         if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -56,16 +55,16 @@ namespace Tea {
                                         480,
                                         SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
-        if (this->window == NULL) {
+        if (this->window == nullptr) {
             std::cerr << "Error creating SDL window: " << SDL_GetError() << std::endl;
             exit(1);
         }
 
-        this->graphics.reset(new PlatformSDLGraphics(*this));
-        this->input.reset(new PlatformSDLInput(*this));
+        this->graphics = std::make_unique<PlatformSDLGraphics>(*this);
+        this->input    = std::make_unique<PlatformSDLInput>(*this);
     }
 
-    PlatformSDL::~PlatformSDL() {
+    PlatformSDL::~PlatformSDL() noexcept {
         SDL_DestroyWindow(this->window);
         SDL_Quit();
     }
@@ -82,6 +81,12 @@ namespace Tea {
             while (SDL_PollEvent(&e) != 0) {
                 if (e.type == SDL_QUIT) {
                     quit = true;
+                } else if (e.type == SDL_KEYDOWN) {
+                    if (!e.key.repeat) {
+                        this->input->key_callback(e.key.keysym.scancode, PlatformInput::KeyState::Pressed);
+                    }
+                } else if (e.type == SDL_KEYUP) {
+                    this->input->key_callback(e.key.keysym.scancode, PlatformInput::KeyState::Released);
                 }
             }
 

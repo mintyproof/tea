@@ -7,7 +7,7 @@
 #include <stb_image.h>
 #include <wren.hpp>
 
-#include "engine.h"
+#include "../engine.h"
 
 #define MAX_VERTICES 1024 * 32
 
@@ -102,7 +102,7 @@ namespace Tea {
         return true;
     }
 
-    Renderer::Renderer(Engine& engine): engine(engine) {}
+    Renderer::Renderer(Engine& engine): Module(engine) { this->init(); }
 
     Renderer::~Renderer() {
         glDeleteBuffers(1, &this->vbo);
@@ -180,19 +180,19 @@ namespace Tea {
             double   h      = wrenGetSlotDouble(vm, 4);
             uint32_t color  = static_cast<uint32_t>(wrenGetSlotDouble(vm, 5));
 
-            uint8_t r = color >> 24;
-            uint8_t g = (color >> 16) & 0xff;
-            uint8_t b = (color >> 8) & 0xff;
-            uint8_t a = color & 0xff;
+            uint8_t r = static_cast<uint8_t>(color >> 24);
+            uint8_t g = static_cast<uint8_t>((color >> 16) & 0xff);
+            uint8_t b = static_cast<uint8_t>((color >> 8) & 0xff);
+            uint8_t a = static_cast<uint8_t>(color & 0xff);
 
-            engine->get_renderer().rect(x, y, w, h, r, g, b, a);
+            engine->get_module<Renderer>()->rect(x, y, w, h, r, g, b, a);
         });
 
         binder.bind_method("static tea/graphics::Graphics::setTexture(_)", [](WrenVM* vm) {
             auto engine = static_cast<Engine*>(wrenGetUserData(vm));
             auto ptr    = reinterpret_cast<std::shared_ptr<Texture>*>(wrenGetSlotForeign(vm, 1));
 
-            engine->get_renderer().set_texture(*ptr);
+            engine->get_module<Renderer>()->set_texture(*ptr);
         });
 
         binder.bind_method("static tea/graphics::Texture::load(_)", [](WrenVM* vm) {
@@ -246,7 +246,7 @@ namespace Tea {
     }
 
     void Renderer::set_texture(std::shared_ptr<Texture>& tex) {
-        if (this->current_texture->get_gl_texture() != tex->get_gl_texture() && this->vertices.size() > 0) flush();
+        if (this->current_texture->get_gl_texture() != tex->get_gl_texture() && !this->vertices.empty()) flush();
         this->current_texture = tex;
     }
 
@@ -258,4 +258,8 @@ namespace Tea {
         this->push_vertex({x + w, y, 1, 0, {r, g, b, a}});
         this->push_vertex({x + w, y + h, 1, 1, {r, g, b, a}});
     }
+
+    void Renderer::pre_update() { this->begin(); }
+
+    void Renderer::post_update() { this->flush(); }
 }

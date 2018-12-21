@@ -1,4 +1,6 @@
 #include "engine.h"
+#include "modules/input.h"
+#include "modules/renderer.h"
 
 #include <toml/toml.h>
 #include <wren.hpp>
@@ -80,11 +82,9 @@ namespace Tea {
         return vm;
     }
 
-    Engine::Engine(): renderer(Renderer(*this)) {}
+    Engine::Engine() = default;
 
     Engine::~Engine() {
-        std::cout << "Quitting engine:" << std::endl;
-        std::cout << "| Freeing memory" << std::endl;
         wrenFreeVM(this->vm);
 
         std::cout << "Bye." << std::endl;
@@ -101,8 +101,12 @@ namespace Tea {
         engine->manifest = mf;
         engine->platform = Platform::init();
 
-        Renderer::bind(engine->binder);
-        engine->renderer.init();
+        engine->add_module<Input>();
+        engine->add_module<Renderer>();
+
+        for (auto& module : engine->modules) {
+            module.second->bind(engine->binder);
+        }
 
         // Now that we have a persistent pointer to Engine, set it as the Wren userdata
         // So the scripting stuff can access the rest of the engine
@@ -113,13 +117,12 @@ namespace Tea {
     AssetManager&    Engine::get_assets() { return this->assets; }
     ScriptingBinder& Engine::get_binder() { return this->binder; }
     Platform&        Engine::get_platform() { return *(this->platform); }
-    Renderer&        Engine::get_renderer() { return this->renderer; }
 
     int Engine::run() {
         std::cout << "Starting up." << std::endl;
 
         // First find the main module specificed in the manifest
-        auto separator_index = this->manifest.main.rfind(".");
+        auto separator_index = this->manifest.main.rfind('.');
         auto module_name     = this->manifest.main.substr(0, separator_index);
         auto class_name      = this->manifest.main.substr(separator_index + 1);
 
@@ -141,7 +144,9 @@ namespace Tea {
         this->prelude_update_method_handle = wrenMakeCallHandle(this->vm, "update(_)");
 
         this->platform->main_loop([this](double delta) {
-            this->get_renderer().begin();
+            for (auto& module : this->modules) {
+                module.second->pre_update();
+            }
 
             // Call the update method in Prelude
             wrenEnsureSlots(this->vm, 2);
@@ -149,7 +154,9 @@ namespace Tea {
             wrenSetSlotDouble(this->vm, 1, delta);
             wrenCall(this->vm, this->prelude_update_method_handle);
 
-            this->get_renderer().flush();
+            for (auto& module : this->modules) {
+                module.second->post_update();
+            }
         });
 
         return 0;

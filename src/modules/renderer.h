@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <glad/glad.h>
+#include "../module.h"
 
 namespace Tea {
     class Asset;
@@ -45,14 +46,16 @@ namespace Tea {
         uint32_t height;
     };
 
-    class Renderer {
+    class Renderer: public Module {
     public:
-        Renderer(Engine& engine);
-        ~Renderer();
+        explicit Renderer(Engine& engine);
+        ~Renderer() override;
 
         void init();
 
-        static void bind(Tea::ScriptingBinder& binder);
+        void bind(Tea::ScriptingBinder& binder) override;
+        void pre_update() override;
+        void post_update() override;
 
         void begin();
         void push_vertex(Vertex vtx);
@@ -63,8 +66,6 @@ namespace Tea {
         void rect(float x, float y, float w, float h, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
     private:
-        Engine& engine;
-
         GLuint vbo;
 
         GLuint vertex_shader;

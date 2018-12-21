@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.0)
 
 project(tea C CXX)
-set (CMAKE_C_STANDARD 11)
-set (CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
 
 # Both SDL and PhysFS's CMakeLists add an "uninstall" target - these conflict
 # This overrides that but may cause issues using other build backends
-set (ALLOW_DUPLICATE_CUSTOM_TARGETS ON)
+set(ALLOW_DUPLICATE_CUSTOM_TARGETS ON)
 
 # SDL
-set (SDL_STATIC ON)
+set(SDL_STATIC ON)
 add_subdirectory(deps/sdl)
 
 # Glad
@@ -18,17 +18,17 @@ target_include_directories(glad PUBLIC deps/glad/include)
 
 # Wren
 set(WREN_SOURCES
-	deps/wren/src/vm/wren_compiler.c
-	deps/wren/src/vm/wren_core.c
-	deps/wren/src/vm/wren_debug.c
-	deps/wren/src/vm/wren_primitive.c
-	deps/wren/src/vm/wren_utils.c
-	deps/wren/src/vm/wren_value.c
-	deps/wren/src/vm/wren_vm.c
+        deps/wren/src/vm/wren_compiler.c
+        deps/wren/src/vm/wren_core.c
+        deps/wren/src/vm/wren_debug.c
+        deps/wren/src/vm/wren_primitive.c
+        deps/wren/src/vm/wren_utils.c
+        deps/wren/src/vm/wren_value.c
+        deps/wren/src/vm/wren_vm.c
 
-	deps/wren/src/optional/wren_opt_meta.c
-	deps/wren/src/optional/wren_opt_random.c
-)
+        deps/wren/src/optional/wren_opt_meta.c
+        deps/wren/src/optional/wren_opt_random.c
+        )
 
 add_library(wren ${WREN_SOURCES})
 target_include_directories(wren PRIVATE deps/wren/src/optional deps/wren/src/vm)
@@ -50,30 +50,31 @@ target_include_directories(gsl INTERFACE deps/gsl/include)
 # Resources
 include(deps/cmrc/CMakeRC.cmake)
 cmrc_add_resource_library(tea-res NAMESPACE tea WHENCE res/
-	res/tea/graphics.wren
-	res/tea/prelude.wren
-)
+        res/tea/graphics.wren
+        res/tea/prelude.wren)
 
 # Engine
-set(ENGINE_SOURCES 
-	src/assets.cpp
-	src/assets.h
-	src/engine.cpp
-	src/engine.h
-	src/main.cpp
-	src/platform_sdl.cpp
-	src/platform_sdl.h
-	src/platform.h
-	src/renderer.cpp
-	src/renderer.h
-	src/utils.cpp
-	src/utils.h
-)
+set(ENGINE_SOURCES
+        src/modules/input.cpp
+        src/modules/input.h
+        src/modules/renderer.cpp
+        src/modules/renderer.h
+        src/assets.cpp
+        src/assets.h
+        src/engine.cpp
+        src/engine.h
+        src/main.cpp
+        src/module.h
+        src/platform_sdl.cpp
+        src/platform_sdl.h
+        src/platform.h
+        src/utils.cpp
+        src/utils.h)
 
 add_executable(tea ${ENGINE_SOURCES})
 target_link_libraries(tea tea-res wren tinytoml stb gsl SDL2-static glad)
 if (MSVC)
-	target_compile_options(tea PRIVATE /W4 /wd4100 /D _CRT_SECURE_NO_WARNINGS)
+    target_compile_options(tea PRIVATE /W4 /wd4100 /D _CRT_SECURE_NO_WARNINGS)
 else ()
-	target_compile_options(tea PRIVATE -Wall -Wextra -pedantic -Wno-error=unused-parameter)
+    target_compile_options(tea PRIVATE -Wall -Wextra -pedantic -Wno-error=unused-parameter)
 endif ()
