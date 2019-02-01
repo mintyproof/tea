@@ -1,21 +1,15 @@
-[submodule "deps/sdl"]
-	path = deps/sdl
-	url = https://github.com/SDL-mirror/SDL
 [submodule "deps/physfs"]
 	path = deps/physfs
 	url = https://github.com/Didstopia/physfs
 [submodule "deps/wren"]
 	path = deps/wren
 	url = https://github.com/munificent/wren
-[submodule "deps/tinytoml"]
-	path = deps/tinytoml
-	url = https://github.com/mayah/tinytoml
 [submodule "deps/cmrc"]
 	path = deps/cmrc
 	url = https://github.com/vector-of-bool/cmrc
 [submodule "deps/stb"]
 	path = deps/stb
 	url = https://github.com/nothings/stb
-[submodule "deps/gsl"]
-	path = deps/gsl
-	url = https://github.com/Microsoft/GSL
+[submodule "deps/glfw"]
+	path = deps/glfw
+	url = https://github.com/glfw/glfw

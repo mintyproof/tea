@@ -2,35 +2,13 @@
 #include "modules/input.h"
 #include "modules/renderer.h"
 
-#include <toml/toml.h>
 #include <wren.hpp>
 
 #include <cstring>
 #include <iostream>
+#include <sstream>
 
 namespace Tea {
-    EngineManifest load_manifest() {
-        std::ifstream     ifs("game.toml");
-        toml::ParseResult pr = toml::parse(ifs);
-
-        if (!pr.valid()) {
-            std::cerr << "Error parsing manifest: " << pr.errorReason << std::endl;
-            exit(1);
-        }
-
-        auto v = pr.value;
-
-        auto mainClassValue = v.find("app.main");
-        if (mainClassValue) {
-            EngineManifest mf;
-            mf.main = mainClassValue->as<std::string>();
-            return mf;
-        } else {
-            std::cerr << "Manifest did not declare app.main key." << std::endl;
-            exit(1);
-        }
-    }
-
     void wren_stdout(WrenVM*, const char* text) { std::cout << text << std::flush; }
 
     void wren_error(WrenVM*, WrenErrorType type, const char* module, int line, const char* message) {
@@ -94,11 +72,9 @@ namespace Tea {
         std::cout << "Initializing engine.." << std::endl;
 
         auto vm = init_wren();
-        auto mf = load_manifest();
 
         std::unique_ptr<Engine> engine(new Engine());
         engine->vm       = vm;
-        engine->manifest = mf;
         engine->platform = Platform::init();
 
         engine->add_module<Input>();
@@ -122,15 +98,12 @@ namespace Tea {
         std::cout << "Starting up." << std::endl;
 
         // First find the main module specificed in the manifest
-        auto separator_index = this->manifest.main.rfind('.');
-        auto module_name     = this->manifest.main.substr(0, separator_index);
-        auto class_name      = this->manifest.main.substr(separator_index + 1);
 
         // Then run the prelude with the main class
         std::ostringstream exec_prelude_code;
         exec_prelude_code << "import \"tea/prelude\" for Prelude\n";
-        exec_prelude_code << "import \"" << module_name << "\" for " << class_name << "\n";
-        exec_prelude_code << "Prelude.run(" << class_name << ")";
+        exec_prelude_code << "import main for Main\n";
+        exec_prelude_code << "Prelude.run(Main)";
 
         auto interpret_result = wrenInterpret(this->vm, "_init", exec_prelude_code.str().c_str());
         if (interpret_result != WrenInterpretResult::WREN_RESULT_SUCCESS) {

@@ -16,10 +16,6 @@ typedef struct SDL_Window SDL_Window;
 typedef void*             SDL_GLContext;
 
 namespace Tea {
-    struct EngineManifest {
-        std::string main;
-    };
-
     class Engine {
     public:
         Engine();
@@ -62,7 +58,6 @@ namespace Tea {
         ScriptingBinder binder;
 
         AssetManager   assets;
-        EngineManifest manifest;
 
         std::unordered_map<std::type_index, std::unique_ptr<Module>> modules;
     };
