@@ -8,16 +8,16 @@
 namespace Tea {
     Input::Input(Engine& engine): Module(engine) {
         this->engine.get_platform().set_key_callback([&](int keycode, Platform::KeyState state) {
-            // TODO: make sure the ptr here can't get use-after-free'd
+            // TODO: make sure the `this` ptr here can't get use-after-free'd
             // it shouldn't because as a mostly-singleton this class only gets dealloc'd when we finish everything off
-            if (keycode < 0 || keycode >= this->keys_down.size()) return;
+            if (keycode < 0 || keycode >= static_cast<int>(this->keys_down.size())) return;
 
             std::cout << "key update: " << keycode << " " << static_cast<int>(state) << std::endl;
             this->keys_down[keycode] = state == Platform::KeyState::Pressed;
         });
     }
 
-    void Input::bind(Tea::ScriptingBinder& binder) {}
+    void Input::bind(Tea::ScriptingBinder&) {}
 
     bool Input::is_key_down(Keycode keycode) const noexcept {
         if (keycode >= this->keys_down.size()) return false;

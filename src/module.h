@@ -12,7 +12,7 @@ namespace Tea {
 
         virtual ~Module() {}
 
-        virtual void bind(Tea::ScriptingBinder& binder) {}
+        virtual void bind(Tea::ScriptingBinder&) {}
         virtual void pre_update() {}
         virtual void post_update() {}
     protected:

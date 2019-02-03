@@ -95,14 +95,11 @@ namespace Tea {
     Platform&        Engine::get_platform() { return *(this->platform); }
 
     int Engine::run() {
-        std::cout << "Starting up." << std::endl;
-
-        // First find the main module specificed in the manifest
-
-        // Then run the prelude with the main class
+        // Run the prelude with the main class
+        // TODO: make "main::Main" configurable here
         std::ostringstream exec_prelude_code;
         exec_prelude_code << "import \"tea/prelude\" for Prelude\n";
-        exec_prelude_code << "import main for Main\n";
+        exec_prelude_code << "import \"main\" for Main\n";
         exec_prelude_code << "Prelude.run(Main)";
 
         auto interpret_result = wrenInterpret(this->vm, "_init", exec_prelude_code.str().c_str());

@@ -7,6 +7,7 @@
 #include <stb_image.h>
 #include <wren.hpp>
 
+#include "../assets.h"
 #include "../engine.h"
 
 #define MAX_VERTICES 1024 * 32
@@ -114,6 +115,11 @@ namespace Tea {
     }
 
     void Renderer::init() {
+        std::cout << "Initializing render backend:" << std::endl;
+        std::cout << " - GL " << glGetString(GL_VERSION) << std::endl;
+        std::cout << " - Vendor: " << glGetString(GL_VENDOR) << std::endl;
+        std::cout << " - Renderer: " << glGetString(GL_RENDERER) << std::endl;
+
         glGenBuffers(1, &this->vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
 

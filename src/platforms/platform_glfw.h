@@ -17,8 +17,13 @@ namespace Tea {
 
         void set_key_callback(std::function<void(int, KeyState)> new_callback) noexcept override;
 
+        double get_timer() const noexcept override;
+
         void main_loop(std::function<void(double)> update_function) override;
     private:
+        static void glfw_error_callback(int error, const char* description);
+        static void glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
         std::function<void(int, KeyState)> key_callback;
 
         GLFWwindow* window;

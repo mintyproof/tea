@@ -19,6 +19,9 @@ namespace Tea {
 
         virtual void set_key_callback(std::function<void(int, KeyState)> key_callback) noexcept = 0;
 
+        // TODO: should this be an uint64_t? Variable or predefined precision?
+        virtual double get_timer() const noexcept = 0;
+
         virtual void main_loop(std::function<void(double)> update_function) = 0;
     };
 }
