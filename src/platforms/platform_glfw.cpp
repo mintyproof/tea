@@ -30,6 +30,8 @@ namespace Tea {
     }
 
     GLFWPlatform::GLFWPlatform() {
+        this->window_title = "Hello World";
+
         std::cout << "Initializing GLFW backend: " << glfwGetVersionString() << std::endl;
 
         glfwSetErrorCallback(glfw_error_callback);
@@ -37,7 +39,7 @@ namespace Tea {
             std::terminate();
         }
 
-        this->window = glfwCreateWindow(640, 480, "Hello World", nullptr, nullptr);
+        this->window = glfwCreateWindow(640, 480, this->window_title.c_str(), nullptr, nullptr);
         if (this->window == nullptr) {
             std::terminate();
         }
@@ -70,6 +72,15 @@ namespace Tea {
 
     void GLFWPlatform::resize_window(uint32_t width, uint32_t height) {
         glfwSetWindowSize(this->window, width, height);
+    }
+
+    std::string GLFWPlatform::get_window_title() const noexcept {
+        return this->window_title;
+    }
+
+    void GLFWPlatform::set_window_title(std::string new_title) noexcept {
+        glfwSetWindowTitle(this->window, new_title.c_str());
+        this->window_title = new_title;
     }
 
     void GLFWPlatform::set_key_callback(std::function<void(int, KeyState)> new_callback) noexcept {

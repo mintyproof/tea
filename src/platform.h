@@ -16,6 +16,9 @@ namespace Tea {
         virtual uint32_t get_window_width() const noexcept  = 0;
         virtual uint32_t get_window_height() const noexcept = 0;
         virtual void resize_window(uint32_t width, uint32_t height) = 0;
+        
+        virtual std::string get_window_title() const noexcept = 0;
+        virtual void set_window_title(std::string new_title) noexcept = 0;
 
         virtual void set_key_callback(std::function<void(int, KeyState)> key_callback) noexcept = 0;
 
