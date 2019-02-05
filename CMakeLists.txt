@@ -60,6 +60,7 @@ set(ENGINE_SOURCES
 
 add_executable(tea ${ENGINE_SOURCES})
 set_target_properties(tea PROPERTIES C_STANDARD 11 CXX_STANDARD 11)
+target_compile_features(tea PUBLIC cxx_std_11)
 target_link_libraries(tea tea-res wren stb glfw glad)
 if (MSVC)
     target_compile_options(tea PRIVATE /W4 /wd4100 /D _CRT_SECURE_NO_WARNINGS)
