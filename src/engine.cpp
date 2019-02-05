@@ -26,7 +26,7 @@ namespace Tea {
 
     AssetManager& Engine::get_assets() { return this->assets; }
     Platform&     Engine::get_platform() { return *(this->platform); }
-    Scripting& Engine::get_scripting() { return *(this->scripting); }
+    Scripting&    Engine::get_scripting() { return *(this->scripting); }
 
     int Engine::run() {
         this->scripting->init("main", "Main");

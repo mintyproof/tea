@@ -3,8 +3,8 @@
 
 #include <cstdint>
 #include <string>
-#include <typeinfo>
 #include <typeindex>
+#include <typeinfo>
 #include <unordered_map>
 
 struct WrenVM;
@@ -52,11 +52,13 @@ namespace Tea {
 
         template <class T>
         T& set_native_type(T&& new_value, uint8_t slot_containing_class) {
-            auto ptr = static_cast<ForeignWrapper<T>*>(this->_set_foreign(slot_containing_class, sizeof(ForeignWrapper<T>)));
-            ptr->type = std::type_index(typeid(T));
+            auto ptr =
+                static_cast<ForeignWrapper<T>*>(this->_set_foreign(slot_containing_class, sizeof(ForeignWrapper<T>)));
+            ptr->type  = std::type_index(typeid(T));
             ptr->value = new_value;
             return ptr->value;
         }
+
     private:
         Slot(WrenVM* vm, uint8_t index): vm(vm), index(index) {}
 
@@ -82,7 +84,7 @@ namespace Tea {
 
         template <typename F>
         void bind(std::string signature, F callback) {
-            static auto mb = callback;
+            static auto mb    = callback;
             static auto inner = [](WrenVM* vm) {
                 Scripting* s = Scripting::_from_vm_ptr(vm);
                 mb(*s);
@@ -95,12 +97,12 @@ namespace Tea {
         void update(double delta);
 
     private:
-        void _bind(std::string signature, void (*func)(WrenVM*));
+        void              _bind(std::string signature, void (*func)(WrenVM*));
         static Scripting* _from_vm_ptr(WrenVM* ptr);
 
-        std::unordered_map<std::string, void(*)(WrenVM*)> methods;
-        Engine& engine;
-        WrenVM* vm;
+        std::unordered_map<std::string, void (*)(WrenVM*)> methods;
+        Engine&                                            engine;
+        WrenVM*                                            vm;
 
         WrenHandle* prelude_class_handle;
         WrenHandle* prelude_update_method_handle;

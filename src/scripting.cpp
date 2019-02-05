@@ -51,9 +51,7 @@ namespace Tea {
         return wrapper->type == std::type_index(type);
     }
 
-    void* Slot::_get_foreign() const {
-        return wrenGetSlotForeign(this->vm, this->index);
-    }
+    void* Slot::_get_foreign() const { return wrenGetSlotForeign(this->vm, this->index); }
 
     void* Slot::_set_foreign(uint8_t class_slot, size_t size) {
         return wrenSetSlotNewForeign(this->vm, this->index, class_slot, size);
@@ -77,8 +75,8 @@ namespace Tea {
             }
         };
         cfg.loadModuleFn = [](WrenVM* vm, const char* name) -> char* {
-            auto scripting = static_cast<Scripting*>(wrenGetUserData(vm));
-            auto& engine = scripting->get_engine();
+            auto  scripting = static_cast<Scripting*>(wrenGetUserData(vm));
+            auto& engine    = scripting->get_engine();
 
             std::ostringstream filename;
             filename << name << ".wren";
@@ -93,14 +91,18 @@ namespace Tea {
 
             return code;
         };
-        cfg.bindForeignMethodFn = [](WrenVM* vm, const char* module, const char* className, bool isStatic, const char* signature) -> void(*)(WrenVM*) {
+        cfg.bindForeignMethodFn = [](WrenVM*     vm,
+                                     const char* module,
+                                     const char* className,
+                                     bool        isStatic,
+                                     const char* signature) -> void (*)(WrenVM*) {
             std::ostringstream full_signature;
             if (isStatic) full_signature << "static ";
             full_signature << module << "::" << className << "::" << signature;
 
             auto scripting = static_cast<Scripting*>(wrenGetUserData(vm));
-            auto entry = scripting->methods.find(full_signature.str());
-            if (entry != scripting->methods.end()){
+            auto entry     = scripting->methods.find(full_signature.str());
+            if (entry != scripting->methods.end()) {
                 return entry->second;
             }
             return nullptr;
@@ -111,13 +113,9 @@ namespace Tea {
 
     Scripting::~Scripting() { wrenFreeVM(this->vm); }
 
-    Scripting* Scripting::_from_vm_ptr(WrenVM* ptr) {
-        return static_cast<Scripting*>(wrenGetUserData(ptr));
-    }
+    Scripting* Scripting::_from_vm_ptr(WrenVM* ptr) { return static_cast<Scripting*>(wrenGetUserData(ptr)); }
 
-    Engine& Scripting::get_engine() {
-        return this->engine;
-    }
+    Engine& Scripting::get_engine() { return this->engine; }
 
     Slot Scripting::slot(uint8_t slot_index) {
         wrenEnsureSlots(this->vm, slot_index + 1);
@@ -157,7 +155,5 @@ namespace Tea {
         wrenCall(this->vm, this->prelude_update_method_handle);
     }
 
-    void Scripting::_bind(std::string signature, void(*func)(WrenVM*)) {
-        this->methods.emplace(signature, func);
-    }
+    void Scripting::_bind(std::string signature, void (*func)(WrenVM*)) { this->methods.emplace(signature, func); }
 }
