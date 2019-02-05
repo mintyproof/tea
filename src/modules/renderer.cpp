@@ -9,6 +9,7 @@
 
 #include "../assets.h"
 #include "../engine.h"
+#include "../scripting.h"
 
 #define MAX_VERTICES 1024 * 32
 
@@ -177,55 +178,45 @@ namespace Tea {
         this->current_texture           = this->pixel_texture;
     }
 
-    void Renderer::bind(Tea::ScriptingBinder& binder) {
-        binder.bind_method("static tea/graphics::Graphics::rect(_,_,_,_,_)", [](WrenVM* vm) {
-            auto     engine = static_cast<Engine*>(wrenGetUserData(vm));
-            double   x      = wrenGetSlotDouble(vm, 1);
-            double   y      = wrenGetSlotDouble(vm, 2);
-            double   w      = wrenGetSlotDouble(vm, 3);
-            double   h      = wrenGetSlotDouble(vm, 4);
-            uint32_t color  = static_cast<uint32_t>(wrenGetSlotDouble(vm, 5));
-
-            uint8_t r = static_cast<uint8_t>(color >> 24);
-            uint8_t g = static_cast<uint8_t>((color >> 16) & 0xff);
-            uint8_t b = static_cast<uint8_t>((color >> 8) & 0xff);
-            uint8_t a = static_cast<uint8_t>(color & 0xff);
-
-            engine->get_module<Renderer>()->rect(x, y, w, h, r, g, b, a);
+    void Renderer::bind(Tea::Scripting& s) {
+        s.bind("static tea/graphics::Graphics::rect(_,_,_,_,_)", [](Tea::Scripting& s) {
+            uint32_t color = static_cast<uint32_t>(s.slot(5).as_num());
+            s.get_engine().get_module<Renderer>()->rect(
+                s.slot(1).as_num(),
+                s.slot(2).as_num(),
+                s.slot(3).as_num(),
+                s.slot(4).as_num(),
+                static_cast<uint8_t>(color >> 24),
+                static_cast<uint8_t>((color >> 16) & 0xff),
+                static_cast<uint8_t>((color >> 8) & 0xff),
+                static_cast<uint8_t>(color & 0xff)
+            );
         });
 
-        binder.bind_method("static tea/graphics::Graphics::setTexture(_)", [](WrenVM* vm) {
-            auto engine = static_cast<Engine*>(wrenGetUserData(vm));
-            auto ptr    = reinterpret_cast<std::shared_ptr<Texture>*>(wrenGetSlotForeign(vm, 1));
-
-            engine->get_module<Renderer>()->set_texture(*ptr);
+        s.bind("static tea/graphics::Graphics::setTexture(_)", [](Tea::Scripting& s) {
+            s.get_engine().get_module<Renderer>()->set_texture(s.slot(1).get_native_type<std::shared_ptr<Texture>>());
         });
 
-        binder.bind_method("static tea/graphics::Texture::load(_)", [](WrenVM* vm) {
-            auto engine = static_cast<Engine*>(wrenGetUserData(vm));
+        s.bind("static tea/graphics::Texture::load(_)", [](Tea::Scripting& s) {
+            auto filename = s.slot(1).as_str();
 
-            std::string filename(wrenGetSlotString(vm, 1));
-
-            auto file = engine->get_assets().find_asset(filename);
+            auto file = s.get_engine().get_assets().find_asset(filename);
             if (file == nullptr) {
-                wrenSetSlotString(vm, 0, "Could not find file.");
-                wrenAbortFiber(vm, 0);
+                s.error("Could not find file.");
                 return;
             }
 
-            auto ptr = reinterpret_cast<std::shared_ptr<Texture>*>(
-                wrenSetSlotNewForeign(vm, 0, 0, sizeof(std::shared_ptr<Texture>)));
-            *ptr = Texture::load(*file);
+            s.slot(0).set_native_type(Texture::load(*file), 0);
         });
 
-        binder.bind_method("tea/graphics::Texture::width", [](WrenVM* vm) {
-            auto ptr = reinterpret_cast<std::shared_ptr<Texture>*>(wrenGetSlotForeign(vm, 0));
-            wrenSetSlotDouble(vm, 0, static_cast<double>(ptr->get()->get_width()));
+        s.bind("tea/graphics::Texture::width", [](Tea::Scripting& s) {
+            auto w = s.slot(0).get_native_type<std::shared_ptr<Texture>>()->get_width();
+            s.slot(0).set_num(w);
         });
 
-        binder.bind_method("tea/graphics::Texture::height", [](WrenVM* vm) {
-            auto ptr = reinterpret_cast<std::shared_ptr<Texture>*>(wrenGetSlotForeign(vm, 0));
-            wrenSetSlotDouble(vm, 0, static_cast<double>(ptr->get()->get_height()));
+        s.bind("tea/graphics::Texture::height", [](Tea::Scripting& s) {
+            auto w = s.slot(0).get_native_type<std::shared_ptr<Texture>>()->get_height();
+            s.slot(0).set_num(w);
         });
     }
 

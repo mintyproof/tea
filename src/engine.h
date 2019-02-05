@@ -8,23 +8,17 @@
 #include "assets.h"
 #include "module.h"
 #include "platform.h"
+#include "scripting.h"
 #include "utils.h"
-
-typedef struct WrenVM     WrenVM;
-typedef struct WrenHandle WrenHandle;
-typedef struct SDL_Window SDL_Window;
-typedef void*             SDL_GLContext;
 
 namespace Tea {
     class Engine {
     public:
         Engine();
         ~Engine();
-        static std::unique_ptr<Engine> init();
-
-        AssetManager&    get_assets();
-        ScriptingBinder& get_binder();
-        Platform&        get_platform();
+        AssetManager& get_assets();
+        Scripting&    get_scripting();
+        Platform&     get_platform();
 
         int run();
 
@@ -52,12 +46,8 @@ namespace Tea {
     private:
         std::unique_ptr<Platform> platform;
 
-        WrenVM*         vm;
-        WrenHandle*     prelude_class_handle;
-        WrenHandle*     prelude_update_method_handle;
-        ScriptingBinder binder;
-
-        AssetManager   assets;
+        AssetManager               assets;
+        std::unique_ptr<Scripting> scripting;
 
         std::unordered_map<std::type_index, std::unique_ptr<Module>> modules;
     };

@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
 project(tea C CXX)
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 11)
 
 # GLFW
 add_subdirectory(deps/glfw)
@@ -55,10 +53,13 @@ set(ENGINE_SOURCES
         src/main.cpp
         src/module.h
         src/platform.h
+        src/scripting.h
+        src/scripting.cpp
         src/utils.cpp
         src/utils.h)
 
 add_executable(tea ${ENGINE_SOURCES})
+set_target_properties(tea PROPERTIES C_STANDARD 11 CXX_STANDARD 11)
 target_link_libraries(tea tea-res wren stb glfw glad)
 if (MSVC)
     target_compile_options(tea PRIVATE /W4 /wd4100 /D _CRT_SECURE_NO_WARNINGS)

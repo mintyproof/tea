@@ -11,8 +11,6 @@
 namespace Tea {
     class Asset;
     class Engine;
-    class ScriptingBinder;
-
     struct Vertex {
         float x;
         float y;
@@ -53,7 +51,7 @@ namespace Tea {
 
         void init();
 
-        void bind(Tea::ScriptingBinder& binder) override;
+        void bind(Tea::Scripting& s) override;
         void pre_update() override;
         void post_update() override;
 

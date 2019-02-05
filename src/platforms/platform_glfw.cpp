@@ -1,8 +1,8 @@
 #include "platform_glfw.h"
 
 #define GLFW_INCLUDE_NONE
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 #include <exception>
 #include <iostream>
@@ -19,15 +19,13 @@ namespace Tea {
         // TODO: use scancodes or keycodes here?
         // TODO: make a consistent scancode mapping, or bite the bullet and use strings (lmao)
         if (action == GLFW_PRESS) {
-            platform->key_callback(scancode, KeyState::Pressed);   
+            platform->key_callback(scancode, KeyState::Pressed);
         } else if (action == GLFW_RELEASE) {
             platform->key_callback(scancode, KeyState::Released);
         }
     }
 
-    std::unique_ptr<Platform> Platform::init() {
-        return std::unique_ptr<Platform>(new GLFWPlatform());
-    }
+    std::unique_ptr<Platform> Platform::init() { return std::unique_ptr<Platform>(new GLFWPlatform()); }
 
     GLFWPlatform::GLFWPlatform() {
         this->window_title = "Hello World";
@@ -51,12 +49,10 @@ namespace Tea {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
         glfwMakeContextCurrent(window);
-        gladLoadGLES2Loader((GLADloadproc) glfwGetProcAddress);
+        gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress);
     }
 
-    GLFWPlatform::~GLFWPlatform() noexcept {
-        glfwTerminate();
-    }
+    GLFWPlatform::~GLFWPlatform() noexcept { glfwTerminate(); }
 
     uint32_t GLFWPlatform::get_window_width() const noexcept {
         int width, height;
@@ -74,9 +70,7 @@ namespace Tea {
         glfwSetWindowSize(this->window, width, height);
     }
 
-    std::string GLFWPlatform::get_window_title() const noexcept {
-        return this->window_title;
-    }
+    std::string GLFWPlatform::get_window_title() const noexcept { return this->window_title; }
 
     void GLFWPlatform::set_window_title(std::string new_title) noexcept {
         glfwSetWindowTitle(this->window, new_title.c_str());
@@ -87,9 +81,7 @@ namespace Tea {
         this->key_callback = new_callback;
     }
 
-    double GLFWPlatform::get_timer() const noexcept {
-        return glfwGetTime();
-    }
+    double GLFWPlatform::get_timer() const noexcept { return glfwGetTime(); }
 
     void GLFWPlatform::main_loop(std::function<void(double)> update_function) {
         glfwSwapInterval(1);
@@ -97,7 +89,7 @@ namespace Tea {
         double timer = glfwGetTime();
         while (!glfwWindowShouldClose(this->window)) {
             double new_time = glfwGetTime();
-            double delta = new_time - timer;
+            double delta    = new_time - timer;
             update_function(delta);
 
             glfwSwapBuffers(window);

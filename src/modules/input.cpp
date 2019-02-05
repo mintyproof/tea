@@ -17,7 +17,7 @@ namespace Tea {
         });
     }
 
-    void Input::bind(Tea::ScriptingBinder&) {}
+    void Input::bind(Tea::Scripting&) {}
 
     bool Input::is_key_down(Keycode keycode) const noexcept {
         if (keycode >= this->keys_down.size()) return false;
