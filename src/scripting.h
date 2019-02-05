@@ -91,7 +91,7 @@ namespace Tea {
             this->_bind(signature, inner);
         }
 
-        void init();
+        void init(std::string main_module, std::string main_class);
         void update(double delta);
 
     private:

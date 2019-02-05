@@ -129,7 +129,7 @@ namespace Tea {
         wrenAbortFiber(vm, 0);
     }
 
-    void Scripting::init() {
+    void Scripting::init(std::string main_module, std::string main_class) {
         // Run the prelude with the main class
         // TODO: make "main::Main" configurable here
         std::ostringstream exec_prelude_code;

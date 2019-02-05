@@ -29,7 +29,7 @@ namespace Tea {
     Scripting& Engine::get_scripting() { return *(this->scripting); }
 
     int Engine::run() {
-        this->scripting->init();
+        this->scripting->init("main", "Main");
 
         this->platform->main_loop([this](double delta) {
             for (auto& module : this->modules) {
