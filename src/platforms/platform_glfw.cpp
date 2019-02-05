@@ -13,15 +13,15 @@ namespace Tea {
         std::cerr << "GLFW error " << error << ": " << description << std::endl;
     }
 
-    void GLFWPlatform::glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    void GLFWPlatform::glfw_key_callback(GLFWwindow* window, int keycode, int scancode, int action, int mods) {
         auto platform = static_cast<GLFWPlatform*>(glfwGetWindowUserPointer(window));
 
         // TODO: use scancodes or keycodes here?
         // TODO: make a consistent scancode mapping, or bite the bullet and use strings (lmao)
         if (action == GLFW_PRESS) {
-            platform->key_callback(scancode, KeyState::Pressed);
+            platform->key_callback(keycode, KeyState::Pressed);
         } else if (action == GLFW_RELEASE) {
-            platform->key_callback(scancode, KeyState::Released);
+            platform->key_callback(keycode, KeyState::Released);
         }
     }
 
@@ -43,10 +43,10 @@ namespace Tea {
         }
 
         glfwSetWindowUserPointer(this->window, static_cast<void*>(this));
-
         glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+        glfwSetKeyCallback(this->window, GLFWPlatform::glfw_key_callback);
 
         glfwMakeContextCurrent(window);
         gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress);
@@ -91,6 +91,7 @@ namespace Tea {
             double new_time = glfwGetTime();
             double delta    = new_time - timer;
             update_function(delta);
+            timer = new_time;
 
             glfwSwapBuffers(window);
             glfwPollEvents();

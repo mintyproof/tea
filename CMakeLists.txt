@@ -35,6 +35,7 @@ target_include_directories(stb INTERFACE deps/stb)
 # Resources
 include(deps/cmrc/CMakeRC.cmake)
 cmrc_add_resource_library(tea-res NAMESPACE tea WHENCE res/
+        res/tea/input.wren
         res/tea/graphics.wren
         res/tea/prelude.wren)
 

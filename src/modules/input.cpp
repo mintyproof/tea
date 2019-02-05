@@ -17,7 +17,13 @@ namespace Tea {
         });
     }
 
-    void Input::bind(Tea::Scripting&) {}
+    void Input::bind(Scripting& s) {
+        s.bind("static tea/input::Keys::is_down(_)", [](Scripting& s) {
+            auto input   = s.get_engine().get_module<Input>();
+            auto keycode = static_cast<Keycode>(s.slot(1).as_num());
+            s.slot(0).set_bool(input->is_key_down(keycode));
+        });
+    }
 
     bool Input::is_key_down(Keycode keycode) const noexcept {
         if (keycode >= this->keys_down.size()) return false;
