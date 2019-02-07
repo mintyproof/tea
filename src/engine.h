@@ -2,6 +2,7 @@
 #define TEA_ENGINE_H
 
 #include <memory>
+#include <string>
 #include <typeindex>
 #include <unordered_map>
 
@@ -20,7 +21,7 @@ namespace Tea {
         Scripting&    get_scripting();
         Platform&     get_platform();
 
-        int run();
+        int run(std::string main_module, std::string main_class);
 
         template <class T>
         void add_module() {

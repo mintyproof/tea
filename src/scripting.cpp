@@ -132,8 +132,8 @@ namespace Tea {
         // TODO: make "main::Main" configurable here
         std::ostringstream exec_prelude_code;
         exec_prelude_code << "import \"tea/prelude\" for Prelude\n";
-        exec_prelude_code << "import \"main\" for Main\n";
-        exec_prelude_code << "Prelude.run(Main)";
+        exec_prelude_code << "import \"" << main_module << "\" for " << main_class << "\n";
+        exec_prelude_code << "Prelude.run(" << main_class << ")";
 
         auto interpret_result = wrenInterpret(this->vm, "_init", exec_prelude_code.str().c_str());
         if (interpret_result != WrenInterpretResult::WREN_RESULT_SUCCESS) {

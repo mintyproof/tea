@@ -11,7 +11,6 @@ class Player {
     }
     
     update(delta) {
-        System.print(delta)
         _vy = _vy + delta * -700
         _y = _y + _vy * delta
 

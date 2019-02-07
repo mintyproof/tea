@@ -28,8 +28,8 @@ namespace Tea {
     Platform&     Engine::get_platform() { return *(this->platform); }
     Scripting&    Engine::get_scripting() { return *(this->scripting); }
 
-    int Engine::run() {
-        this->scripting->init("main", "Main");
+    int Engine::run(std::string main_module, std::string main_class) {
+        this->scripting->init(main_module, main_class);
 
         this->platform->main_loop([this](double delta) {
             for (auto& module : this->modules) {
