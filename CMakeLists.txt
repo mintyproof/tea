@@ -59,7 +59,8 @@ set(ENGINE_SOURCES
         src/scripting.h
         src/scripting.cpp
         src/utils.cpp
-        src/utils.h)
+        src/utils.h
+        src/vec.h)
 
 add_executable(tea ${ENGINE_SOURCES})
 set_target_properties(tea PROPERTIES C_STANDARD 11 CXX_STANDARD 11)
