@@ -11,8 +11,6 @@ namespace Tea {
             // TODO: make sure the `this` ptr here can't get use-after-free'd
             // it shouldn't because as a mostly-singleton this class only gets dealloc'd when we finish everything off
             if (keycode < 0 || keycode >= static_cast<int>(this->keys_down.size())) return;
-
-            std::cout << "key update: " << keycode << " " << static_cast<int>(state) << std::endl;
             this->keys_down[keycode] = state == Platform::KeyState::Pressed;
         });
     }
@@ -23,6 +21,24 @@ namespace Tea {
             auto keycode = static_cast<Keycode>(s.slot(1).as_num());
             s.slot(0).set_bool(input->is_key_down(keycode));
         });
+
+        s.bind("static tea/input::Keys::is_up(_)", [](Scripting& s) {
+            auto input   = s.get_engine().get_module<Input>();
+            auto keycode = static_cast<Keycode>(s.slot(1).as_num());
+            s.slot(0).set_bool(input->is_key_up(keycode));
+        });
+
+        s.bind("static tea/input::Keys::is_pressed(_)", [](Scripting& s) {
+            auto input   = s.get_engine().get_module<Input>();
+            auto keycode = static_cast<Keycode>(s.slot(1).as_num());
+            s.slot(0).set_bool(input->is_key_pressed(keycode));
+        });
+
+        s.bind("static tea/input::Keys::is_released(_)", [](Scripting& s) {
+            auto input   = s.get_engine().get_module<Input>();
+            auto keycode = static_cast<Keycode>(s.slot(1).as_num());
+            s.slot(0).set_bool(input->is_key_released(keycode));
+        });
     }
 
     bool Input::is_key_down(Keycode keycode) const noexcept {
@@ -32,9 +48,20 @@ namespace Tea {
 
     bool Input::is_key_up(Input::Keycode keycode) const noexcept { return !this->is_key_down(keycode); }
 
-    void Input::pre_update() {
-        // todo: flip buffer for key_pressed/released
+    bool Input::is_key_pressed(Input::Keycode keycode) const noexcept {
+        if (keycode >= this->keys_down.size()) return false;
+        return this->keys_down[keycode] && !this->last_keys_down[keycode];
     }
 
-    void Input::post_update() {}
+    bool Input::is_key_released(Input::Keycode keycode) const noexcept {
+        if (keycode >= this->keys_down.size()) return false;
+        return !this->keys_down[keycode] && this->last_keys_down[keycode];
+    } 
+
+    void Input::pre_update() {
+    }
+
+    void Input::post_update() {
+        this->last_keys_down = this->keys_down;
+    }
 }

@@ -6,8 +6,6 @@ class Player {
         _x = 100
         _y = 500
         _vy = 0
-
-        _was_down = false
     }
     
     update(delta) {
@@ -19,10 +17,9 @@ class Player {
             _vy = 0
         }
 
-        if (Keys.is_down(32) && !_was_down) {
+        if (Keys.is_pressed(32)) {
             _vy = 400
         }
-        _was_down = Keys.is_down(32)
         
         if (Keys.is_down(263)) _x = _x - delta * 300 // left
         if (Keys.is_down(262)) _x = _x + delta * 300 // left
