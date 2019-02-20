@@ -1,6 +1,8 @@
 #ifndef TEA_PLATFORM_GLFW_H
 #define TEA_PLATFORM_GLFW_H
 
+#include <string>
+
 #include "../platform.h"
 
 struct GLFWwindow;

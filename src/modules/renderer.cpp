@@ -13,8 +13,7 @@
 
 #define MAX_VERTICES 1024 * 32
 
-static auto vertex_shader_source   = R"glsl(
-    #version 300 es
+static auto vertex_shader_source   = R"glsl(#version 300 es
     precision mediump float;
 
     in vec2 v_position;
@@ -34,8 +33,7 @@ static auto vertex_shader_source   = R"glsl(
         gl_Position = vec4((v_position - half_size) / half_size, 0.0, 1.0);
     }
     )glsl";
-static auto fragment_shader_source = R"glsl(
-    #version 300 es
+static auto fragment_shader_source = R"glsl(#version 300 es
     precision mediump float;
 
     in vec2 f_uv;

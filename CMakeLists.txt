@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 3.0)
 project(tea C CXX)
 
 # GLFW
-add_subdirectory(deps/glfw)
+if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
+    add_subdirectory(deps/glfw)
+endif()
 
 # Glad
 add_library(glad deps/glad/src/glad.c)
@@ -67,4 +69,12 @@ if (MSVC)
     target_compile_options(tea PRIVATE /W4 /wd4100 /D _CRT_SECURE_NO_WARNINGS)
 else ()
     target_compile_options(tea PRIVATE -Wall -Wextra -pedantic -Wno-error=unused-parameter)
+endif ()
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
+    target_link_libraries(tea "-s WASM=1 -s USE_GLFW=3 -s USE_WEBGL2=1")
+
+    if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+        target_link_libraries(tea "-Oz")
+    endif ()
 endif ()
