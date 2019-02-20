@@ -81,13 +81,13 @@ namespace Tea {
             std::ostringstream filename;
             filename << name << ".wren";
 
-            auto asset = engine.get_assets().find_asset(filename.str());
-            if (!asset) return nullptr;
+            std::vector<uint8_t> data;
+            if (!engine.get_assets().load_asset(filename.str(), data)) return nullptr;
 
             // Using C strings here because Wren expects a malloc()'d char* for it to take ownership of
-            char* code = static_cast<char*>(malloc(asset->get_data().size() + 1));
-            memcpy(code, &asset->get_data().front(), asset->get_data().size());
-            code[asset->get_data().size()] = '\0';
+            char* code = static_cast<char*>(malloc(data.size() + 1));
+            memcpy(code, &data.front(), data.size());
+            code[data.size()] = '\0';
 
             return code;
         };

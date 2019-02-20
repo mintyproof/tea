@@ -24,8 +24,8 @@ namespace Tea {
 
     class Texture {
     public:
-        static std::shared_ptr<Texture> load(Asset& asset);
-        static std::shared_ptr<Texture> create(std::vector<uint8_t>& data, uint32_t width, uint32_t height);
+        static std::shared_ptr<Texture> load(const std::vector<uint8_t>& data);
+        static std::shared_ptr<Texture> create(const std::vector<uint8_t>& data, uint32_t width, uint32_t height);
         ~Texture();
 
         Texture(const Texture&) = delete;

@@ -49,12 +49,12 @@ static auto fragment_shader_source = R"glsl(#version 300 es
 )glsl";
 
 namespace Tea {
-    std::shared_ptr<Texture> Texture::load(Asset& asset) {
+    std::shared_ptr<Texture> Texture::load(const std::vector<uint8_t>& asset) {
         int w, h, channels_in_file;
 
         stbi_set_flip_vertically_on_load(true);
         uint8_t* c_data =
-            stbi_load_from_memory(&asset.get_data().front(), asset.get_data().size(), &w, &h, &channels_in_file, 4);
+            stbi_load_from_memory(&asset.front(), asset.size(), &w, &h, &channels_in_file, 4);
         if (c_data == nullptr) {
             std::cerr << "Error loading image." << std::endl;
         }
@@ -65,7 +65,7 @@ namespace Tea {
         return Texture::create(data, w, h);
     }
 
-    std::shared_ptr<Texture> Texture::create(std::vector<uint8_t>& data, uint32_t width, uint32_t height) {
+    std::shared_ptr<Texture> Texture::create(const std::vector<uint8_t>& data, uint32_t width, uint32_t height) {
         std::shared_ptr<Texture> tex(new Texture());
 
         glGenTextures(1, &tex->tex);
@@ -196,13 +196,13 @@ namespace Tea {
         s.bind("static tea/graphics::Texture::load(_)", [](Tea::Scripting& s) {
             auto filename = s.slot(1).as_str();
 
-            auto file = s.get_engine().get_assets().find_asset(filename);
-            if (file == nullptr) {
+            std::vector<uint8_t> data;
+            if (!s.get_engine().get_assets().load_asset(filename, data)) {
                 s.error("Could not find file.");
                 return;
             }
 
-            s.slot(0).set_native_type(Texture::load(*file), 0);
+            s.slot(0).set_native_type(Texture::load(data), 0);
         });
 
         s.bind("tea/graphics::Texture::width", [](Tea::Scripting& s) {

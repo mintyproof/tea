@@ -8,26 +8,17 @@
 CMRC_DECLARE(tea);
 
 namespace Tea {
-    Asset::Asset(std::string name, std::vector<uint8_t> data): name(name), data(std::move(data)) {}
-    std::vector<uint8_t>& Asset::get_data() { return *&this->data; }
-
     AssetManager::AssetManager()  = default;
     AssetManager::~AssetManager() = default;
 
-    Asset* AssetManager::find_asset(std::string name) {
-        // Check open file cache
-        auto existing_file = this->loaded_assets.find(name);
-        if (existing_file != this->loaded_assets.end()) return &existing_file->second;
-
+    bool AssetManager::load_asset(std::string name, std::vector<uint8_t>& out) {
         // Check embedded resources
         auto fs = cmrc::tea::get_filesystem();
         if (fs.exists(name)) {
             auto file = fs.open(name);
 
-            std::vector<uint8_t> contents(file.begin(), file.end());
-
-            auto inserted_asset = this->loaded_assets.emplace(name, Asset(name, contents));
-            return &inserted_asset.first->second;
+            out.insert(out.begin(), file.begin(), file.end());
+            return true;
         }
 
         // Then read file
@@ -35,11 +26,17 @@ namespace Tea {
         stream.open(name, std::ifstream::in | std::ifstream::binary);
 
         // Check if file exists
-        if (!stream.is_open()) return nullptr;
+        if (!stream.is_open()) return false;
 
-        std::vector<uint8_t> contents((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+        out.insert(out.begin(), (std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+        return true;
+    }
 
-        auto inserted_asset = this->loaded_assets.emplace(name, Asset(name, contents));
-        return &inserted_asset.first->second;
+    bool AssetManager::load_asset(std::string name, std::string& out) {
+        // TODO: don't copy again here
+        std::vector<uint8_t> data;
+        if (!this->load_asset(name, data)) return false;
+        out.insert(out.begin(), data.begin(), data.end());
+        return true;
     }
 }
