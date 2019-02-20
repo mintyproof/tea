@@ -23,7 +23,7 @@ namespace Tea {
         void post_update() override;
 
     private:
-        std::array<bool, 500> keys_down;  // TODO: define a proper set of keycodes that are platform independent
+        std::array<bool, 500> keys_down;
         std::array<bool, 500> last_keys_down;
     };
 }

@@ -17,12 +17,12 @@ class Player {
             _vy = 0
         }
 
-        if (Keys.is_pressed(32)) {
+        if (Keys.is_pressed(Keys.space)) {
             _vy = 400
         }
         
-        if (Keys.is_down(263)) _x = _x - delta * 300 // left
-        if (Keys.is_down(262)) _x = _x + delta * 300 // left
+        if (Keys.is_down(Keys.left)) _x = _x - delta * 300 // left
+        if (Keys.is_down(Keys.right)) _x = _x + delta * 300 // left
     }
 
     render() {
