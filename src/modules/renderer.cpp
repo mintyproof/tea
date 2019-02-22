@@ -179,10 +179,10 @@ namespace Tea {
     void Renderer::bind(Tea::Scripting& s) {
         s.bind("static tea/graphics::Graphics::drawRectangle(_,_,_,_,_)", [](Tea::Scripting& s) {
             uint32_t color = static_cast<uint32_t>(s.slot(5).as_num());
-            s.get_engine().get_module<Renderer>()->rect(s.slot(1).as_num(),
-                                                        s.slot(2).as_num(),
-                                                        s.slot(3).as_num(),
-                                                        s.slot(4).as_num(),
+            s.get_engine().get_module<Renderer>()->rect(static_cast<float>(s.slot(1).as_num()),
+                                                        static_cast<float>(s.slot(2).as_num()),
+                                                        static_cast<float>(s.slot(3).as_num()),
+                                                        static_cast<float>(s.slot(4).as_num()),
                                                         static_cast<uint8_t>(color >> 24),
                                                         static_cast<uint8_t>((color >> 16) & 0xff),
                                                         static_cast<uint8_t>((color >> 8) & 0xff),
@@ -228,7 +228,9 @@ namespace Tea {
 
     void Renderer::flush() {
         auto& platform = this->engine.get_platform();
-        glUniform2f(this->screen_size_uniform, platform.get_window_width(), platform.get_window_height());
+        glUniform2f(this->screen_size_uniform,
+                    static_cast<GLfloat>(platform.get_window_width()),
+                    static_cast<GLfloat>(platform.get_window_height()));
 
         glBindTexture(GL_TEXTURE_2D, this->current_texture->get_gl_texture());
 
