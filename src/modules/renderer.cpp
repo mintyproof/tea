@@ -191,29 +191,44 @@ namespace Tea {
     void Renderer::bind(Tea::Scripting& s) {
         s.bind("static tea/graphics::Graphics::drawTexture(_,_,_)", [](Tea::Scripting& s) {
             std::shared_ptr<Texture> texture = s.slot(1).get_native_type<std::shared_ptr<Texture>>();
+            std::shared_ptr<Color> color = Color::fromRGB(1, 1, 1);
             s.get_engine().get_module<Renderer>()->draw_texture(texture,
                                                                 static_cast<float>(s.slot(2).as_num()),
                                                                 static_cast<float>(s.slot(3).as_num()),
-                                                                static_cast<uint32_t>(texture->get_width()),
-                                                                static_cast<uint32_t>(texture->get_height()));
+                                                                static_cast<float>(texture->get_width()),
+                                                                static_cast<float>(texture->get_height()),
+                                                                color);
         });
 
         s.bind("static tea/graphics::Graphics::drawTexture(_,_,_,_,_)", [](Tea::Scripting& s) {
             std::shared_ptr<Texture> texture = s.slot(1).get_native_type<std::shared_ptr<Texture>>();
+            std::shared_ptr<Color> color = Color::fromRGB(1, 1, 1);
             s.get_engine().get_module<Renderer>()->draw_texture(texture,
                                                                 static_cast<float>(s.slot(2).as_num()),
                                                                 static_cast<float>(s.slot(3).as_num()),
                                                                 static_cast<float>(s.slot(4).as_num()),
-                                                                static_cast<float>(s.slot(5).as_num()));
+                                                                static_cast<float>(s.slot(5).as_num()),
+                                                                color);
+        });
+
+        s.bind("static tea/graphics::Graphics::drawTexture(_,_,_,_,_,_)", [](Tea::Scripting& s) {
+            std::shared_ptr<Texture> texture = s.slot(1).get_native_type<std::shared_ptr<Texture>>();
+            std::shared_ptr<Color> color = s.slot(6).get_native_type<std::shared_ptr<Color>>();
+            s.get_engine().get_module<Renderer>()->draw_texture(texture,
+                                                                static_cast<float>(s.slot(2).as_num()),
+                                                                static_cast<float>(s.slot(3).as_num()),
+                                                                static_cast<float>(s.slot(4).as_num()),
+                                                                static_cast<float>(s.slot(5).as_num()),
+                                                                color);
         });
 
         s.bind("static tea/graphics::Graphics::drawRect(_,_,_,_,_)", [](Tea::Scripting& s) {
             std::shared_ptr<Color> color = s.slot(5).get_native_type<std::shared_ptr<Color>>();
             s.get_engine().get_module<Renderer>()->draw_rect(static_cast<float>(s.slot(1).as_num()),
-                                                            static_cast<float>(s.slot(2).as_num()),
-                                                            static_cast<float>(s.slot(3).as_num()),
-                                                            static_cast<float>(s.slot(4).as_num()),
-                                                            color);
+                                                             static_cast<float>(s.slot(2).as_num()),
+                                                             static_cast<float>(s.slot(3).as_num()),
+                                                             static_cast<float>(s.slot(4).as_num()),
+                                                             color);
         });
 
         s.bind("static tea/graphics::Graphics::setTexture(_)", [](Tea::Scripting& s) {
@@ -243,18 +258,18 @@ namespace Tea {
         });
 
         s.bind("static tea/graphics::Color::fromRGB(_,_,_)", [](Tea::Scripting& s) {
-            auto r = s.slot(1).as_num();
-            auto g = s.slot(2).as_num();
-            auto b = s.slot(3).as_num();
+            float r = static_cast<float>(s.slot(1).as_num());
+            float g = static_cast<float>(s.slot(2).as_num());
+            float b = static_cast<float>(s.slot(3).as_num());
 
             s.slot(0).set_native_type(Color::fromRGB(r, g, b), 0);
         });
 
         s.bind("static tea/graphics::Color::fromRGBA(_,_,_,_)", [](Tea::Scripting& s) {
-            auto r = s.slot(1).as_num();
-            auto g = s.slot(2).as_num();
-            auto b = s.slot(3).as_num();
-            auto a = s.slot(4).as_num();
+            float r = static_cast<float>(s.slot(1).as_num());
+            float g = static_cast<float>(s.slot(2).as_num());
+            float b = static_cast<float>(s.slot(3).as_num());
+            float a = static_cast<float>(s.slot(4).as_num());
 
             s.slot(0).set_native_type(Color::fromRGBA(r, g, b, a), 0);
         });
@@ -318,9 +333,9 @@ namespace Tea {
         this->push_vertex({x + w, y + h, 1, 1, color->r, color->g, color->b, color->a});
     }
 
-    void Renderer::draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h) {
+    void Renderer::draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h, std::shared_ptr<Color>& color) {
         this->set_texture(tex);
-        rect(x, y, w, h, Color::fromRGBA(1, 1, 1, 1));
+        rect(x, y, w, h, color);
     }
 
     void Renderer::draw_rect(float x, float y, float w, float h, std::shared_ptr<Color>& color) {

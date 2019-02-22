@@ -14,7 +14,7 @@ namespace Tea {
     struct Vertex {
         float x;
         float y;
-        
+
         float u;
         float v;
 
@@ -80,7 +80,7 @@ namespace Tea {
         void set_texture(std::shared_ptr<Texture>& tex);
 
         void rect(float x, float y, float w, float h, std::shared_ptr<Color>& color);
-        void draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h);
+        void draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h, std::shared_ptr<Color>& color);
         void draw_rect(float x, float y, float w, float h, std::shared_ptr<Color>& color);
     private:
         GLuint vbo;
