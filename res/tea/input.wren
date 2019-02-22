@@ -1,3 +1,10 @@
+foreign class Keyboard {
+    foreign static isDown(keycode)
+    foreign static isUp(keycode)
+    foreign static isPressed(keycode)
+    foreign static isReleased(keycode)
+}
+
 class Keys {
     // Keycodes based on GLFW keys (as of v3.2.1): 
     // https://www.glfw.org/docs/latest/group__keys.html
@@ -122,9 +129,4 @@ class Keys {
     static right_alt { 346 }
     static right_super { 347 }
     static menu { 348 }
-
-    foreign static is_down(keycode)
-    foreign static is_up(keycode)
-    foreign static is_pressed(keycode)
-    foreign static is_released(keycode)
 }

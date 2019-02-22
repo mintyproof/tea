@@ -16,25 +16,25 @@ namespace Tea {
     }
 
     void Input::bind(Scripting& s) {
-        s.bind("static tea/input::Keys::is_down(_)", [](Scripting& s) {
+        s.bind("static tea/input::Keyboard::isDown(_)", [](Scripting& s) {
             auto input   = s.get_engine().get_module<Input>();
             auto keycode = static_cast<Keycode>(s.slot(1).as_num());
             s.slot(0).set_bool(input->is_key_down(keycode));
         });
 
-        s.bind("static tea/input::Keys::is_up(_)", [](Scripting& s) {
+        s.bind("static tea/input::Keyboard::isUp(_)", [](Scripting& s) {
             auto input   = s.get_engine().get_module<Input>();
             auto keycode = static_cast<Keycode>(s.slot(1).as_num());
             s.slot(0).set_bool(input->is_key_up(keycode));
         });
 
-        s.bind("static tea/input::Keys::is_pressed(_)", [](Scripting& s) {
+        s.bind("static tea/input::Keyboard::isPressed(_)", [](Scripting& s) {
             auto input   = s.get_engine().get_module<Input>();
             auto keycode = static_cast<Keycode>(s.slot(1).as_num());
             s.slot(0).set_bool(input->is_key_pressed(keycode));
         });
 
-        s.bind("static tea/input::Keys::is_released(_)", [](Scripting& s) {
+        s.bind("static tea/input::Keyboard::isReleased(_)", [](Scripting& s) {
             auto input   = s.get_engine().get_module<Input>();
             auto keycode = static_cast<Keycode>(s.slot(1).as_num());
             s.slot(0).set_bool(input->is_key_released(keycode));
