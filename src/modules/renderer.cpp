@@ -88,6 +88,18 @@ namespace Tea {
     uint32_t Texture::get_height() { return this->height; }
     GLuint   Texture::get_gl_texture() { return this->tex; }
 
+    std::shared_ptr<Color> Color::fromRGB(float r, float g, float b) {
+        std::shared_ptr<Color> color(new Color(r, g, b, 1.0f));
+        return color;
+    }
+
+    std::shared_ptr<Color> Color::fromRGBA(float r, float g, float b, float a) {
+        std::shared_ptr<Color> color(new Color(r, g, b, a));
+        return color;
+    }
+
+    Color::Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
+
     bool get_shader_compile_error(GLuint shader, std::string& error) {
         GLint status;
         glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
@@ -160,10 +172,10 @@ namespace Tea {
 
         glVertexAttribPointer(colorAttrib,
                               4,
-                              GL_UNSIGNED_BYTE,
-                              GL_TRUE,
+                              GL_FLOAT,
+                              GL_FALSE,
                               sizeof(Vertex),
-                              reinterpret_cast<const void*>(offsetof(Vertex, rgba)));
+                              reinterpret_cast<const void*>(offsetof(Vertex, r)));
 
         glEnableVertexAttribArray(posAttrib);
         glEnableVertexAttribArray(uvAttrib);
@@ -196,15 +208,12 @@ namespace Tea {
         });
 
         s.bind("static tea/graphics::Graphics::drawRect(_,_,_,_,_)", [](Tea::Scripting& s) {
-            uint32_t color = static_cast<uint32_t>(s.slot(5).as_num());
+            std::shared_ptr<Color> color = s.slot(5).get_native_type<std::shared_ptr<Color>>();
             s.get_engine().get_module<Renderer>()->draw_rect(static_cast<float>(s.slot(1).as_num()),
                                                             static_cast<float>(s.slot(2).as_num()),
                                                             static_cast<float>(s.slot(3).as_num()),
                                                             static_cast<float>(s.slot(4).as_num()),
-                                                            static_cast<uint8_t>(color >> 24),
-                                                            static_cast<uint8_t>((color >> 16) & 0xff),
-                                                            static_cast<uint8_t>((color >> 8) & 0xff),
-                                                            static_cast<uint8_t>(color & 0xff));
+                                                            color);
         });
 
         s.bind("static tea/graphics::Graphics::setTexture(_)", [](Tea::Scripting& s) {
@@ -229,8 +238,45 @@ namespace Tea {
         });
 
         s.bind("tea/graphics::Texture::height", [](Tea::Scripting& s) {
-            auto w = s.slot(0).get_native_type<std::shared_ptr<Texture>>()->get_height();
-            s.slot(0).set_num(w);
+            auto h = s.slot(0).get_native_type<std::shared_ptr<Texture>>()->get_height();
+            s.slot(0).set_num(h);
+        });
+
+        s.bind("static tea/graphics::Color::fromRGB(_,_,_)", [](Tea::Scripting& s) {
+            auto r = s.slot(1).as_num();
+            auto g = s.slot(2).as_num();
+            auto b = s.slot(3).as_num();
+
+            s.slot(0).set_native_type(Color::fromRGB(r, g, b), 0);
+        });
+
+        s.bind("static tea/graphics::Color::fromRGBA(_,_,_,_)", [](Tea::Scripting& s) {
+            auto r = s.slot(1).as_num();
+            auto g = s.slot(2).as_num();
+            auto b = s.slot(3).as_num();
+            auto a = s.slot(4).as_num();
+
+            s.slot(0).set_native_type(Color::fromRGBA(r, g, b, a), 0);
+        });
+
+        s.bind("tea/graphics::Color::r", [](Tea::Scripting& s) {
+            auto r = s.slot(0).get_native_type<std::shared_ptr<Color>>()->r;
+            s.slot(0).set_num(r);
+        });
+
+        s.bind("tea/graphics::Color::g", [](Tea::Scripting& s) {
+            auto g = s.slot(0).get_native_type<std::shared_ptr<Color>>()->g;
+            s.slot(0).set_num(g);
+        });
+
+        s.bind("tea/graphics::Color::b", [](Tea::Scripting& s) {
+            auto b = s.slot(0).get_native_type<std::shared_ptr<Color>>()->b;
+            s.slot(0).set_num(b);
+        });
+
+        s.bind("tea/graphics::Color::a", [](Tea::Scripting& s) {
+            auto a = s.slot(0).get_native_type<std::shared_ptr<Color>>()->a;
+            s.slot(0).set_num(a);
         });
     }
 
@@ -263,23 +309,23 @@ namespace Tea {
         this->current_texture = tex;
     }
 
-    void Renderer::rect(float x, float y, float w, float h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-        this->push_vertex({x, y, 0, 0, {r, g, b, a}});
-        this->push_vertex({x + w, y, 1, 0, {r, g, b, a}});
-        this->push_vertex({x, y + h, 0, 1, {r, g, b, a}});
-        this->push_vertex({x, y + h, 0, 1, {r, g, b, a}});
-        this->push_vertex({x + w, y, 1, 0, {r, g, b, a}});
-        this->push_vertex({x + w, y + h, 1, 1, {r, g, b, a}});
+    void Renderer::rect(float x, float y, float w, float h, std::shared_ptr<Color>& color) {
+        this->push_vertex({x, y, 0, 0, color->r, color->g, color->b, color->a});
+        this->push_vertex({x + w, y, 1, 0, color->r, color->g, color->b, color->a});
+        this->push_vertex({x, y + h, 0, 1, color->r, color->g, color->b, color->a});
+        this->push_vertex({x, y + h, 0, 1, color->r, color->g, color->b, color->a});
+        this->push_vertex({x + w, y, 1, 0, color->r, color->g, color->b, color->a});
+        this->push_vertex({x + w, y + h, 1, 1, color->r, color->g, color->b, color->a});
     }
 
     void Renderer::draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h) {
         this->set_texture(tex);
-        rect(x, y, w, h, 0xff, 0xff, 0xff, 0xff);
+        rect(x, y, w, h, Color::fromRGBA(1, 1, 1, 1));
     }
 
-    void Renderer::draw_rect(float x, float y, float w, float h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+    void Renderer::draw_rect(float x, float y, float w, float h, std::shared_ptr<Color>& color) {
         this->set_texture(pixel_texture);
-        rect(x, y, w, h, r, g, b, a);
+        rect(x, y, w, h, color);
     }
 
     void Renderer::pre_update() { this->begin(); }

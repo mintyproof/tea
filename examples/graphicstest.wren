@@ -1,16 +1,19 @@
-import "tea/graphics" for Graphics, Texture
+import "tea/graphics" for Graphics, Texture, Color
 import "tea/input" for Keys
 
 class Main {
     construct init() {
+        _red = Color.fromRGB(1.0, 0.0, 0.0)
+        _blue = Color.fromRGBA(0.0, 0.0, 1.0, 1.0)
+
         _tex1 = Texture.load("hello.png")
         _tex2 = Texture.load("test.png")
     }
 
     update(delta) {
-        Graphics.drawRect(400, 350, 75, 15, 0xff0000ff)
+        Graphics.drawRect(400, 350, 75, 15, _red)
         Graphics.drawTexture(_tex1, 200, 50)
         Graphics.drawTexture(_tex2, 200, 150, 300, 16)
-        Graphics.drawRect(500, 350, 75, 15, 0xffffffff)
+        Graphics.drawRect(500, 350, 75, 15, _blue)
     }
 }

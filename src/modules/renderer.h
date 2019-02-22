@@ -14,12 +14,14 @@ namespace Tea {
     struct Vertex {
         float x;
         float y;
+        
         float u;
         float v;
 
-        // Array and not uint32_t for endianness reasons
-        // uint32_t would reverse the order when giving a literal
-        uint8_t rgba[4];
+        float r;
+        float g;
+        float b;
+        float a;
     };
 
     class Texture {
@@ -44,6 +46,22 @@ namespace Tea {
         uint32_t height;
     };
 
+    class Color {
+    public:
+        static std::shared_ptr<Color> fromRGB(float r, float g, float b);
+        static std::shared_ptr<Color> fromRGBA(float r, float g, float b, float a);
+
+        Color(const Color&) = delete;
+        Color& operator=(const Color&) = delete;
+
+        float r;
+        float g;
+        float b;
+        float a;
+    private:
+        Color(float r, float g, float b, float a);
+    };
+
     class Renderer: public Module {
     public:
         explicit Renderer(Engine& engine);
@@ -61,9 +79,9 @@ namespace Tea {
 
         void set_texture(std::shared_ptr<Texture>& tex);
 
-        void rect(float x, float y, float w, float h, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+        void rect(float x, float y, float w, float h, std::shared_ptr<Color>& color);
         void draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h);
-        void draw_rect(float x, float y, float w, float h, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+        void draw_rect(float x, float y, float w, float h, std::shared_ptr<Color>& color);
     private:
         GLuint vbo;
 
