@@ -62,7 +62,8 @@ namespace Tea {
         void set_texture(std::shared_ptr<Texture>& tex);
 
         void rect(float x, float y, float w, float h, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-
+        void draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h);
+        void draw_rect(float x, float y, float w, float h, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
     private:
         GLuint vbo;
 

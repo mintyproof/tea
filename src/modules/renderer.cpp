@@ -177,16 +177,34 @@ namespace Tea {
     }
 
     void Renderer::bind(Tea::Scripting& s) {
-        s.bind("static tea/graphics::Graphics::drawRectangle(_,_,_,_,_)", [](Tea::Scripting& s) {
+        s.bind("static tea/graphics::Graphics::drawTexture(_,_,_)", [](Tea::Scripting& s) {
+            std::shared_ptr<Texture> texture = s.slot(1).get_native_type<std::shared_ptr<Texture>>();
+            s.get_engine().get_module<Renderer>()->draw_texture(texture,
+                                                                static_cast<float>(s.slot(2).as_num()),
+                                                                static_cast<float>(s.slot(3).as_num()),
+                                                                static_cast<uint32_t>(texture->get_width()),
+                                                                static_cast<uint32_t>(texture->get_height()));
+        });
+
+        s.bind("static tea/graphics::Graphics::drawTexture(_,_,_,_,_)", [](Tea::Scripting& s) {
+            std::shared_ptr<Texture> texture = s.slot(1).get_native_type<std::shared_ptr<Texture>>();
+            s.get_engine().get_module<Renderer>()->draw_texture(texture,
+                                                                static_cast<float>(s.slot(2).as_num()),
+                                                                static_cast<float>(s.slot(3).as_num()),
+                                                                static_cast<float>(s.slot(4).as_num()),
+                                                                static_cast<float>(s.slot(5).as_num()));
+        });
+
+        s.bind("static tea/graphics::Graphics::drawRect(_,_,_,_,_)", [](Tea::Scripting& s) {
             uint32_t color = static_cast<uint32_t>(s.slot(5).as_num());
-            s.get_engine().get_module<Renderer>()->rect(static_cast<float>(s.slot(1).as_num()),
-                                                        static_cast<float>(s.slot(2).as_num()),
-                                                        static_cast<float>(s.slot(3).as_num()),
-                                                        static_cast<float>(s.slot(4).as_num()),
-                                                        static_cast<uint8_t>(color >> 24),
-                                                        static_cast<uint8_t>((color >> 16) & 0xff),
-                                                        static_cast<uint8_t>((color >> 8) & 0xff),
-                                                        static_cast<uint8_t>(color & 0xff));
+            s.get_engine().get_module<Renderer>()->draw_rect(static_cast<float>(s.slot(1).as_num()),
+                                                            static_cast<float>(s.slot(2).as_num()),
+                                                            static_cast<float>(s.slot(3).as_num()),
+                                                            static_cast<float>(s.slot(4).as_num()),
+                                                            static_cast<uint8_t>(color >> 24),
+                                                            static_cast<uint8_t>((color >> 16) & 0xff),
+                                                            static_cast<uint8_t>((color >> 8) & 0xff),
+                                                            static_cast<uint8_t>(color & 0xff));
         });
 
         s.bind("static tea/graphics::Graphics::setTexture(_)", [](Tea::Scripting& s) {
@@ -252,6 +270,16 @@ namespace Tea {
         this->push_vertex({x, y + h, 0, 1, {r, g, b, a}});
         this->push_vertex({x + w, y, 1, 0, {r, g, b, a}});
         this->push_vertex({x + w, y + h, 1, 1, {r, g, b, a}});
+    }
+
+    void Renderer::draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h) {
+        this->set_texture(tex);
+        rect(x, y, w, h, 0xff, 0xff, 0xff, 0xff);
+    }
+
+    void Renderer::draw_rect(float x, float y, float w, float h, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+        this->set_texture(pixel_texture);
+        rect(x, y, w, h, r, g, b, a);
     }
 
     void Renderer::pre_update() { this->begin(); }
