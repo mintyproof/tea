@@ -88,16 +88,8 @@ namespace Tea {
     uint32_t Texture::get_height() { return this->height; }
     GLuint   Texture::get_gl_texture() { return this->tex; }
 
-    std::shared_ptr<Color> Color::fromRGB(float r, float g, float b) {
-        std::shared_ptr<Color> color(new Color(r, g, b, 1.0f));
-        return color;
-    }
 
-    std::shared_ptr<Color> Color::fromRGBA(float r, float g, float b, float a) {
-        std::shared_ptr<Color> color(new Color(r, g, b, a));
-        return color;
-    }
-
+    Color::Color(float r, float g, float b) : r(r), g(g), b(b), a(1) {}
     Color::Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
 
     bool get_shader_compile_error(GLuint shader, std::string& error) {
@@ -190,13 +182,13 @@ namespace Tea {
 
     void Renderer::bind(Tea::Scripting& s) {
         s.bind("static tea/graphics::Graphics::clear(_)", [](Tea::Scripting& s) {
-            std::shared_ptr<Color> color = s.slot(1).get_native_type<std::shared_ptr<Color>>();
+            Color color = s.slot(1).get_native_type<Color>();
             s.get_engine().get_module<Renderer>()->clear(color);
         });
 
         s.bind("static tea/graphics::Graphics::drawTexture(_,_,_)", [](Tea::Scripting& s) {
             std::shared_ptr<Texture> texture = s.slot(1).get_native_type<std::shared_ptr<Texture>>();
-            std::shared_ptr<Color> color = Color::fromRGB(1, 1, 1);
+            Color color(1, 1, 1);
             s.get_engine().get_module<Renderer>()->draw_texture(texture,
                                                                 static_cast<float>(s.slot(2).as_num()),
                                                                 static_cast<float>(s.slot(3).as_num()),
@@ -207,7 +199,7 @@ namespace Tea {
 
         s.bind("static tea/graphics::Graphics::drawTexture(_,_,_,_,_)", [](Tea::Scripting& s) {
             std::shared_ptr<Texture> texture = s.slot(1).get_native_type<std::shared_ptr<Texture>>();
-            std::shared_ptr<Color> color = Color::fromRGB(1, 1, 1);
+            Color color(1, 1, 1);
             s.get_engine().get_module<Renderer>()->draw_texture(texture,
                                                                 static_cast<float>(s.slot(2).as_num()),
                                                                 static_cast<float>(s.slot(3).as_num()),
@@ -218,7 +210,7 @@ namespace Tea {
 
         s.bind("static tea/graphics::Graphics::drawTexture(_,_,_,_,_,_)", [](Tea::Scripting& s) {
             std::shared_ptr<Texture> texture = s.slot(1).get_native_type<std::shared_ptr<Texture>>();
-            std::shared_ptr<Color> color = s.slot(6).get_native_type<std::shared_ptr<Color>>();
+            Color color = s.slot(6).get_native_type<Color>();
             s.get_engine().get_module<Renderer>()->draw_texture(texture,
                                                                 static_cast<float>(s.slot(2).as_num()),
                                                                 static_cast<float>(s.slot(3).as_num()),
@@ -228,7 +220,7 @@ namespace Tea {
         });
 
         s.bind("static tea/graphics::Graphics::drawRect(_,_,_,_,_)", [](Tea::Scripting& s) {
-            std::shared_ptr<Color> color = s.slot(5).get_native_type<std::shared_ptr<Color>>();
+            Color color = s.slot(5).get_native_type<Color>();
             s.get_engine().get_module<Renderer>()->draw_rect(static_cast<float>(s.slot(1).as_num()),
                                                              static_cast<float>(s.slot(2).as_num()),
                                                              static_cast<float>(s.slot(3).as_num()),
@@ -262,46 +254,46 @@ namespace Tea {
             s.slot(0).set_num(h);
         });
 
-        s.bind("static tea/graphics::Color::fromRGB(_,_,_)", [](Tea::Scripting& s) {
+        s.bind("static tea/graphics::Color::rgb(_,_,_)", [](Tea::Scripting& s) {
             float r = static_cast<float>(s.slot(1).as_num());
             float g = static_cast<float>(s.slot(2).as_num());
             float b = static_cast<float>(s.slot(3).as_num());
 
-            s.slot(0).set_native_type(Color::fromRGB(r, g, b), 0);
+            s.slot(0).set_native_type(Color(r, g, b), 0);
         });
 
-        s.bind("static tea/graphics::Color::fromRGBA(_,_,_,_)", [](Tea::Scripting& s) {
+        s.bind("static tea/graphics::Color::rgba(_,_,_,_)", [](Tea::Scripting& s) {
             float r = static_cast<float>(s.slot(1).as_num());
             float g = static_cast<float>(s.slot(2).as_num());
             float b = static_cast<float>(s.slot(3).as_num());
             float a = static_cast<float>(s.slot(4).as_num());
 
-            s.slot(0).set_native_type(Color::fromRGBA(r, g, b, a), 0);
+            s.slot(0).set_native_type(Color(r, g, b, a), 0);
         });
 
         s.bind("tea/graphics::Color::r", [](Tea::Scripting& s) {
-            auto r = s.slot(0).get_native_type<std::shared_ptr<Color>>()->r;
-            s.slot(0).set_num(r);
+            Color c = s.slot(0).get_native_type<Color>();
+            s.slot(0).set_num(c.r);
         });
 
         s.bind("tea/graphics::Color::g", [](Tea::Scripting& s) {
-            auto g = s.slot(0).get_native_type<std::shared_ptr<Color>>()->g;
-            s.slot(0).set_num(g);
+            Color c = s.slot(0).get_native_type<Color>();
+            s.slot(0).set_num(c.g);
         });
 
         s.bind("tea/graphics::Color::b", [](Tea::Scripting& s) {
-            auto b = s.slot(0).get_native_type<std::shared_ptr<Color>>()->b;
-            s.slot(0).set_num(b);
+            Color c = s.slot(0).get_native_type<Color>();
+            s.slot(0).set_num(c.b);
         });
 
         s.bind("tea/graphics::Color::a", [](Tea::Scripting& s) {
-            auto a = s.slot(0).get_native_type<std::shared_ptr<Color>>()->a;
-            s.slot(0).set_num(a);
+            Color c = s.slot(0).get_native_type<Color>();
+            s.slot(0).set_num(c.a);
         });
     }
 
-    void Renderer::clear(std::shared_ptr<Color>& color) {
-        glClearColor(color->r, color->g, color->b, color->a);
+    void Renderer::clear(Color color) {
+        glClearColor(color.r, color.g, color.b, color.a);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
@@ -333,26 +325,26 @@ namespace Tea {
         this->current_texture = tex;
     }
 
-    void Renderer::rect(float x, float y, float w, float h, std::shared_ptr<Color>& color) {
-        this->push_vertex({x, y, 0, 0, color->r, color->g, color->b, color->a});
-        this->push_vertex({x + w, y, 1, 0, color->r, color->g, color->b, color->a});
-        this->push_vertex({x, y + h, 0, 1, color->r, color->g, color->b, color->a});
-        this->push_vertex({x, y + h, 0, 1, color->r, color->g, color->b, color->a});
-        this->push_vertex({x + w, y, 1, 0, color->r, color->g, color->b, color->a});
-        this->push_vertex({x + w, y + h, 1, 1, color->r, color->g, color->b, color->a});
+    void Renderer::rect(float x, float y, float w, float h, Color color) {
+        this->push_vertex({x, y, 0, 0, color.r, color.g, color.b, color.a});
+        this->push_vertex({x + w, y, 1, 0, color.r, color.g, color.b, color.a});
+        this->push_vertex({x, y + h, 0, 1, color.r, color.g, color.b, color.a});
+        this->push_vertex({x, y + h, 0, 1, color.r, color.g, color.b, color.a});
+        this->push_vertex({x + w, y, 1, 0, color.r, color.g, color.b, color.a});
+        this->push_vertex({x + w, y + h, 1, 1, color.r, color.g, color.b, color.a});
     }
 
-    void Renderer::draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h, std::shared_ptr<Color>& color) {
+    void Renderer::draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h, Color color) {
         this->set_texture(tex);
         rect(x, y, w, h, color);
     }
 
-    void Renderer::draw_rect(float x, float y, float w, float h, std::shared_ptr<Color>& color) {
+    void Renderer::draw_rect(float x, float y, float w, float h, Color color) {
         this->set_texture(pixel_texture);
         rect(x, y, w, h, color);
     }
 
-    void Renderer::pre_update() { this->clear(Color::fromRGB(0, 0, 0)); }
+    void Renderer::pre_update() { this->clear(Color(0, 0, 0)); }
 
     void Renderer::post_update() { this->flush(); }
 }

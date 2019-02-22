@@ -46,20 +46,14 @@ namespace Tea {
         uint32_t height;
     };
 
-    class Color {
-    public:
-        static std::shared_ptr<Color> fromRGB(float r, float g, float b);
-        static std::shared_ptr<Color> fromRGBA(float r, float g, float b, float a);
-
-        Color(const Color&) = delete;
-        Color& operator=(const Color&) = delete;
+    struct Color {
+        Color(float r, float g, float b);
+        Color(float r, float g, float b, float a);
 
         float r;
         float g;
         float b;
         float a;
-    private:
-        Color(float r, float g, float b, float a);
     };
 
     class Renderer: public Module {
@@ -73,15 +67,15 @@ namespace Tea {
         void pre_update() override;
         void post_update() override;
         
-        void clear(std::shared_ptr<Color>& color);
+        void clear(Color color);
         void push_vertex(Vertex vtx);
         void flush();
 
         void set_texture(std::shared_ptr<Texture>& tex);
 
-        void rect(float x, float y, float w, float h, std::shared_ptr<Color>& color);
-        void draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h, std::shared_ptr<Color>& color);
-        void draw_rect(float x, float y, float w, float h, std::shared_ptr<Color>& color);
+        void rect(float x, float y, float w, float h, Color color);
+        void draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h, Color color);
+        void draw_rect(float x, float y, float w, float h, Color color);
     private:
         GLuint vbo;
 

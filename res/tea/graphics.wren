@@ -23,8 +23,8 @@ foreign class Texture {
 }
 
 foreign class Color {
-    foreign static fromRGB(r, g, b)
-    foreign static fromRGBA(r, g, b, a)
+    foreign static rgb(r, g, b)
+    foreign static rgba(r, g, b, a)
 
     foreign r
     foreign g
