@@ -177,7 +177,7 @@ namespace Tea {
     }
 
     void Renderer::bind(Tea::Scripting& s) {
-        s.bind("static tea/graphics::Graphics::rect(_,_,_,_,_)", [](Tea::Scripting& s) {
+        s.bind("static tea/graphics::Graphics::drawRectangle(_,_,_,_,_)", [](Tea::Scripting& s) {
             uint32_t color = static_cast<uint32_t>(s.slot(5).as_num());
             s.get_engine().get_module<Renderer>()->rect(s.slot(1).as_num(),
                                                         s.slot(2).as_num(),
