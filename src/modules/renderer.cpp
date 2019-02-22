@@ -310,6 +310,10 @@ namespace Tea {
         glUniform2f(this->screen_size_uniform,
                     static_cast<GLfloat>(platform.get_window_width()),
                     static_cast<GLfloat>(platform.get_window_height()));
+        // TODO: This should probably be handled somewhere else?
+        glViewport(0, 0,
+                   static_cast<GLsizei>(platform.get_window_width()),
+                   static_cast<GLsizei>(platform.get_window_height()));
 
         glBindTexture(GL_TEXTURE_2D, this->current_texture->get_gl_texture());
 
