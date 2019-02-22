@@ -12,6 +12,7 @@ class Main {
     }
 
     update(delta) {
+        Graphics.clear(Color.fromRGB(100 / 255, 149 / 255, 237 / 255))
         Graphics.drawRect(400, 350, 75, 15, _red)
         Graphics.drawTexture(_tex1, 200, 50)
         Graphics.drawTexture(_tex2, 200, 150, 300, 16, _green)

@@ -1,6 +1,4 @@
 /* weeeee are missing:
- *     clear(color)
- *     present()
  *     drawTexture(texture, x, y, w, h, color, rot)
  *     drawSubtexture(texture, x, y, w, h, ix, iy, iw, ih)
  *     drawSubtexture(texture, x, y, w, h, ix, iy, iw, ih, color)
@@ -10,6 +8,7 @@
  */
 
 class Graphics {
+    foreign static clear(color)
     foreign static drawTexture(tex, x, y)
     foreign static drawTexture(tex, x, y, w, h)
     foreign static drawTexture(tex, x, y, w, h, color)

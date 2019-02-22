@@ -189,6 +189,11 @@ namespace Tea {
     }
 
     void Renderer::bind(Tea::Scripting& s) {
+        s.bind("static tea/graphics::Graphics::clear(_)", [](Tea::Scripting& s) {
+            std::shared_ptr<Color> color = s.slot(1).get_native_type<std::shared_ptr<Color>>();
+            s.get_engine().get_module<Renderer>()->clear(color);
+        });
+
         s.bind("static tea/graphics::Graphics::drawTexture(_,_,_)", [](Tea::Scripting& s) {
             std::shared_ptr<Texture> texture = s.slot(1).get_native_type<std::shared_ptr<Texture>>();
             std::shared_ptr<Color> color = Color::fromRGB(1, 1, 1);
@@ -295,8 +300,8 @@ namespace Tea {
         });
     }
 
-    void Renderer::begin() {
-        glClearColor(0, 0, 0, 1);
+    void Renderer::clear(std::shared_ptr<Color>& color) {
+        glClearColor(color->r, color->g, color->b, color->a);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
@@ -347,7 +352,7 @@ namespace Tea {
         rect(x, y, w, h, color);
     }
 
-    void Renderer::pre_update() { this->begin(); }
+    void Renderer::pre_update() { this->clear(Color::fromRGB(0, 0, 0)); }
 
     void Renderer::post_update() { this->flush(); }
 }

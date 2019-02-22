@@ -72,8 +72,8 @@ namespace Tea {
         void bind(Tea::Scripting& s) override;
         void pre_update() override;
         void post_update() override;
-
-        void begin();
+        
+        void clear(std::shared_ptr<Color>& color);
         void push_vertex(Vertex vtx);
         void flush();
 
