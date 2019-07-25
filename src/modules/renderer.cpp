@@ -5,6 +5,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <glad/glad.h>
 #include <stb_image.h>
+#include <sstream>
 #include <wren.hpp>
 
 #include "../assets.h"
@@ -87,9 +88,6 @@ namespace Tea {
     uint32_t Texture::get_height() { return this->height; }
     GLuint Texture::get_gl_texture() { return this->tex; }
 
-    Color::Color(float r, float g, float b): r(r), g(g), b(b), a(1) {}
-    Color::Color(float r, float g, float b, float a): r(r), g(g), b(b), a(a) {}
-
     bool get_shader_compile_error(GLuint shader, std::string& error) {
         GLint status;
         glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
@@ -160,8 +158,12 @@ namespace Tea {
         glVertexAttribPointer(
             uvAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, u)));
 
-        glVertexAttribPointer(
-            colorAttrib, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, r)));
+        glVertexAttribPointer(colorAttrib,
+                              4,
+                              GL_UNSIGNED_BYTE,
+                              GL_TRUE,
+                              sizeof(Vertex),
+                              reinterpret_cast<const void*>(offsetof(Vertex, abgr)));
 
         glEnableVertexAttribArray(posAttrib);
         glEnableVertexAttribArray(uvAttrib);
@@ -174,126 +176,15 @@ namespace Tea {
         this->current_texture = this->pixel_texture;
     }
 
-    void Renderer::bind(Tea::Scripting& s) {
-        s.bind("static tea/graphics::Graphics::clear(_)", [](Tea::Scripting& s) {
-            Color color = s.slot(1).get_native_type<Color>();
-            s.get_engine().get_module<Renderer>()->clear(color);
-        });
-
-        s.bind("static tea/graphics::Graphics::drawTexture(_,_,_)", [](Tea::Scripting& s) {
-            std::shared_ptr<Texture> texture = s.slot(1).get_native_type<std::shared_ptr<Texture>>();
-            Color color(1, 1, 1);
-            s.get_engine().get_module<Renderer>()->draw_texture(texture,
-                                                                static_cast<float>(s.slot(2).as_num()),
-                                                                static_cast<float>(s.slot(3).as_num()),
-                                                                static_cast<float>(texture->get_width()),
-                                                                static_cast<float>(texture->get_height()),
-                                                                color);
-        });
-
-        s.bind("static tea/graphics::Graphics::drawTexture(_,_,_,_,_)", [](Tea::Scripting& s) {
-            std::shared_ptr<Texture> texture = s.slot(1).get_native_type<std::shared_ptr<Texture>>();
-            Color color(1, 1, 1);
-            s.get_engine().get_module<Renderer>()->draw_texture(texture,
-                                                                static_cast<float>(s.slot(2).as_num()),
-                                                                static_cast<float>(s.slot(3).as_num()),
-                                                                static_cast<float>(s.slot(4).as_num()),
-                                                                static_cast<float>(s.slot(5).as_num()),
-                                                                color);
-        });
-
-        s.bind("static tea/graphics::Graphics::drawTexture(_,_,_,_,_,_)", [](Tea::Scripting& s) {
-            std::shared_ptr<Texture> texture = s.slot(1).get_native_type<std::shared_ptr<Texture>>();
-            Color color = s.slot(6).get_native_type<Color>();
-            s.get_engine().get_module<Renderer>()->draw_texture(texture,
-                                                                static_cast<float>(s.slot(2).as_num()),
-                                                                static_cast<float>(s.slot(3).as_num()),
-                                                                static_cast<float>(s.slot(4).as_num()),
-                                                                static_cast<float>(s.slot(5).as_num()),
-                                                                color);
-        });
-
-        s.bind("static tea/graphics::Graphics::drawRect(_,_,_,_,_)", [](Tea::Scripting& s) {
-            Color color = s.slot(5).get_native_type<Color>();
-            s.get_engine().get_module<Renderer>()->draw_rect(static_cast<float>(s.slot(1).as_num()),
-                                                             static_cast<float>(s.slot(2).as_num()),
-                                                             static_cast<float>(s.slot(3).as_num()),
-                                                             static_cast<float>(s.slot(4).as_num()),
-                                                             color);
-        });
-
-        s.bind("static tea/graphics::Graphics::setTexture(_)", [](Tea::Scripting& s) {
-            s.get_engine().get_module<Renderer>()->set_texture(s.slot(1).get_native_type<std::shared_ptr<Texture>>());
-        });
-
-        s.bind("static tea/graphics::Texture::load(_)", [](Tea::Scripting& s) {
-            auto filename = s.slot(1).as_str();
-
-            std::vector<uint8_t> data;
-            if (!s.get_engine().get_assets().load_asset(filename, data)) {
-                s.error("Could not find file.");
-                return;
-            }
-
-            s.slot(0).set_native_type(Texture::load(data), 0);
-        });
-
-        s.bind("tea/graphics::Texture::width", [](Tea::Scripting& s) {
-            auto w = s.slot(0).get_native_type<std::shared_ptr<Texture>>()->get_width();
-            s.slot(0).set_num(w);
-        });
-
-        s.bind("tea/graphics::Texture::height", [](Tea::Scripting& s) {
-            auto h = s.slot(0).get_native_type<std::shared_ptr<Texture>>()->get_height();
-            s.slot(0).set_num(h);
-        });
-
-        s.bind("static tea/graphics::Color::rgb(_,_,_)", [](Tea::Scripting& s) {
-            float r = static_cast<float>(s.slot(1).as_num());
-            float g = static_cast<float>(s.slot(2).as_num());
-            float b = static_cast<float>(s.slot(3).as_num());
-
-            s.slot(0).set_native_type(Color(r, g, b), 0);
-        });
-
-        s.bind("static tea/graphics::Color::rgba(_,_,_,_)", [](Tea::Scripting& s) {
-            float r = static_cast<float>(s.slot(1).as_num());
-            float g = static_cast<float>(s.slot(2).as_num());
-            float b = static_cast<float>(s.slot(3).as_num());
-            float a = static_cast<float>(s.slot(4).as_num());
-
-            s.slot(0).set_native_type(Color(r, g, b, a), 0);
-        });
-
-        s.bind("tea/graphics::Color::r", [](Tea::Scripting& s) {
-            Color c = s.slot(0).get_native_type<Color>();
-            s.slot(0).set_num(c.r);
-        });
-
-        s.bind("tea/graphics::Color::g", [](Tea::Scripting& s) {
-            Color c = s.slot(0).get_native_type<Color>();
-            s.slot(0).set_num(c.g);
-        });
-
-        s.bind("tea/graphics::Color::b", [](Tea::Scripting& s) {
-            Color c = s.slot(0).get_native_type<Color>();
-            s.slot(0).set_num(c.b);
-        });
-
-        s.bind("tea/graphics::Color::a", [](Tea::Scripting& s) {
-            Color c = s.slot(0).get_native_type<Color>();
-            s.slot(0).set_num(c.a);
-        });
-    }
-
     void Renderer::clear(Color color) {
-        glClearColor(color.r, color.g, color.b, color.a);
+        glClearColor(color.r_float(), color.g_float(), color.b_float(), color.a_float());
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    void Renderer::push_vertex(Vertex vtx) {
-        if (this->vertices.size() >= MAX_VERTICES) flush();
-        this->vertices.push_back(vtx);
+    void Renderer::push_vertices(const std::vector<Vertex>& vtcs) {
+        if (this->vertices.size() + vtcs.size() >= MAX_VERTICES) flush();
+
+        for (auto vertex : vtcs) this->vertices.push_back(vertex);
     }
 
     void Renderer::flush() {
@@ -321,12 +212,13 @@ namespace Tea {
     }
 
     void Renderer::rect(float x, float y, float w, float h, Color color) {
-        this->push_vertex({x, y, 0, 0, color.r, color.g, color.b, color.a});
-        this->push_vertex({x + w, y, 1, 0, color.r, color.g, color.b, color.a});
-        this->push_vertex({x, y + h, 0, 1, color.r, color.g, color.b, color.a});
-        this->push_vertex({x, y + h, 0, 1, color.r, color.g, color.b, color.a});
-        this->push_vertex({x + w, y, 1, 0, color.r, color.g, color.b, color.a});
-        this->push_vertex({x + w, y + h, 1, 1, color.r, color.g, color.b, color.a});
+        uint32_t abgr = color.abgr();
+        this->push_vertices({{x, y, 0, 0, abgr},
+                             {x + w, y, 1, 0, abgr},
+                             {x, y + h, 0, 1, abgr},
+                             {x, y + h, 0, 1, abgr},
+                             {x + w, y, 1, 0, abgr},
+                             {x + w, y + h, 1, 1, abgr}});
     }
 
     void Renderer::draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h, Color color) {
@@ -339,7 +231,7 @@ namespace Tea {
         rect(x, y, w, h, color);
     }
 
-    void Renderer::pre_update() { this->clear(Color(0, 0, 0)); }
+    void Renderer::pre_update() { this->clear(Color::white()); }
 
     void Renderer::post_update() { this->flush(); }
 }

@@ -6,10 +6,10 @@
 #include <vector>
 
 #include <glad/glad.h>
+#include "../color.h"
 #include "../module.h"
 
 namespace Tea {
-    class Asset;
     class Engine;
     struct Vertex {
         float x;
@@ -18,10 +18,9 @@ namespace Tea {
         float u;
         float v;
 
-        float r;
-        float g;
-        float b;
-        float a;
+        // OpenGL reads this backwards, so storing this in agbr format (little endian)
+        // means it reads the vec4 [r, g, b, a]
+        uint32_t abgr;
     };
 
     class Texture {
@@ -46,16 +45,6 @@ namespace Tea {
         uint32_t height;
     };
 
-    struct Color {
-        Color(float r, float g, float b);
-        Color(float r, float g, float b, float a);
-
-        float r;
-        float g;
-        float b;
-        float a;
-    };
-
     class Renderer: public Module {
     public:
         explicit Renderer(Engine& engine);
@@ -63,12 +52,11 @@ namespace Tea {
 
         void init();
 
-        void bind(Tea::Scripting& s) override;
         void pre_update() override;
         void post_update() override;
 
         void clear(Color color);
-        void push_vertex(Vertex vtx);
+        void push_vertices(const std::vector<Vertex>& vtcs);
         void flush();
 
         void set_texture(std::shared_ptr<Texture>& tex);

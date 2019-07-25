@@ -12,8 +12,6 @@ namespace Tea {
 
         explicit Input(Engine& engine);
 
-        void bind(Tea::Scripting& s) override;
-
         bool is_key_down(Keycode keycode) const noexcept;
         bool is_key_up(Keycode keycode) const noexcept;
         bool is_key_pressed(Keycode keycode) const noexcept;

@@ -3,7 +3,6 @@
 
 namespace Tea {
     class Engine;
-    class Scripting;
 
     class Module {
     public:
@@ -11,7 +10,6 @@ namespace Tea {
 
         virtual ~Module() {}
 
-        virtual void bind(Tea::Scripting&) {}
         virtual void pre_update() {}
         virtual void post_update() {}
 

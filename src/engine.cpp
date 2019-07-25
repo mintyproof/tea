@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "bindings.h"
 #include "modules/input.h"
 #include "modules/renderer.h"
 
@@ -17,9 +18,7 @@ namespace Tea {
         this->add_module<Input>();
         this->add_module<Renderer>();
 
-        for (auto& module : this->modules) {
-            module.second->bind(*this->scripting);
-        }
+        bind(*this->scripting);
     }
 
     Engine::~Engine() { std::cout << "Bye." << std::endl; }

@@ -51,6 +51,10 @@ set(ENGINE_SOURCES
         src/platforms/platform_glfw.h
         src/assets.cpp
         src/assets.h
+        src/bindings.cpp
+        src/bindings.h
+        src/color.cpp
+        src/color.h
         src/engine.cpp
         src/engine.h
         src/main.cpp
