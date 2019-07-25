@@ -2,13 +2,9 @@ Language: Cpp
 BasedOnStyle: Chromium
 
 AccessModifierOffset: -4
-AlignAfterOpenBracket: Align
-AlignConsecutiveAssignments: true
-AlignConsecutiveDeclarations: true
-AlignOperands: true
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortCaseLabelsOnASingleLine: true
-AllowShortIfStatementsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: Always
 AllowShortLoopsOnASingleLine: true
 BinPackArguments: false
 BinPackParameters: false

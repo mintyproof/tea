@@ -8,7 +8,7 @@
 CMRC_DECLARE(tea);
 
 namespace Tea {
-    AssetManager::AssetManager()  = default;
+    AssetManager::AssetManager() = default;
     AssetManager::~AssetManager() = default;
 
     bool AssetManager::load_asset(std::string name, std::vector<uint8_t>& out) {

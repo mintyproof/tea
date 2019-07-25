@@ -12,7 +12,7 @@ namespace Tea {
     Engine::Engine() {
         std::cout << "Initializing engine.." << std::endl;
         this->scripting = std::unique_ptr<Scripting>(new Scripting(*this));
-        this->platform  = Platform::init();
+        this->platform = Platform::init();
 
         this->add_module<Input>();
         this->add_module<Renderer>();
@@ -25,8 +25,8 @@ namespace Tea {
     Engine::~Engine() { std::cout << "Bye." << std::endl; }
 
     AssetManager& Engine::get_assets() { return this->assets; }
-    Platform&     Engine::get_platform() { return *(this->platform); }
-    Scripting&    Engine::get_scripting() { return *(this->scripting); }
+    Platform& Engine::get_platform() { return *(this->platform); }
+    Scripting& Engine::get_scripting() { return *(this->scripting); }
 
     int Engine::run(std::string main_module, std::string main_class) {
         this->scripting->init(main_module, main_class);

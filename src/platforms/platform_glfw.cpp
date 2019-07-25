@@ -89,7 +89,7 @@ namespace Tea {
         double timer = glfwGetTime();
         while (!glfwWindowShouldClose(this->window)) {
             double new_time = glfwGetTime();
-            double delta    = new_time - timer;
+            double delta = new_time - timer;
             update_function(delta);
             timer = new_time;
 

@@ -17,25 +17,25 @@ namespace Tea {
 
     void Input::bind(Scripting& s) {
         s.bind("static tea/input::Keyboard::isDown(_)", [](Scripting& s) {
-            auto input   = s.get_engine().get_module<Input>();
+            auto input = s.get_engine().get_module<Input>();
             auto keycode = static_cast<Keycode>(s.slot(1).as_num());
             s.slot(0).set_bool(input->is_key_down(keycode));
         });
 
         s.bind("static tea/input::Keyboard::isUp(_)", [](Scripting& s) {
-            auto input   = s.get_engine().get_module<Input>();
+            auto input = s.get_engine().get_module<Input>();
             auto keycode = static_cast<Keycode>(s.slot(1).as_num());
             s.slot(0).set_bool(input->is_key_up(keycode));
         });
 
         s.bind("static tea/input::Keyboard::isPressed(_)", [](Scripting& s) {
-            auto input   = s.get_engine().get_module<Input>();
+            auto input = s.get_engine().get_module<Input>();
             auto keycode = static_cast<Keycode>(s.slot(1).as_num());
             s.slot(0).set_bool(input->is_key_pressed(keycode));
         });
 
         s.bind("static tea/input::Keyboard::isReleased(_)", [](Scripting& s) {
-            auto input   = s.get_engine().get_module<Input>();
+            auto input = s.get_engine().get_module<Input>();
             auto keycode = static_cast<Keycode>(s.slot(1).as_num());
             s.slot(0).set_bool(input->is_key_released(keycode));
         });
@@ -56,12 +56,9 @@ namespace Tea {
     bool Input::is_key_released(Input::Keycode keycode) const noexcept {
         if (keycode >= this->keys_down.size()) return false;
         return !this->keys_down[keycode] && this->last_keys_down[keycode];
-    } 
-
-    void Input::pre_update() {
     }
 
-    void Input::post_update() {
-        this->last_keys_down = this->keys_down;
-    }
+    void Input::pre_update() {}
+
+    void Input::post_update() { this->last_keys_down = this->keys_down; }
 }

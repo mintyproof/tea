@@ -41,7 +41,7 @@ namespace Tea {
     private:
         Texture() = default;
 
-        GLuint   tex;
+        GLuint tex;
         uint32_t width;
         uint32_t height;
     };
@@ -66,7 +66,7 @@ namespace Tea {
         void bind(Tea::Scripting& s) override;
         void pre_update() override;
         void post_update() override;
-        
+
         void clear(Color color);
         void push_vertex(Vertex vtx);
         void flush();
@@ -76,13 +76,14 @@ namespace Tea {
         void rect(float x, float y, float w, float h, Color color);
         void draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h, Color color);
         void draw_rect(float x, float y, float w, float h, Color color);
+
     private:
         GLuint vbo;
 
         GLuint vertex_shader;
         GLuint fragment_shader;
         GLuint program;
-        GLint  screen_size_uniform;
+        GLint screen_size_uniform;
 
         std::shared_ptr<Texture> current_texture;
         std::shared_ptr<Texture> pixel_texture;

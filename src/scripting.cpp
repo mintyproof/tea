@@ -46,7 +46,7 @@ namespace Tea {
             return false;
         }
 
-        auto ptr     = wrenGetSlotForeign(this->vm, this->index);
+        auto ptr = wrenGetSlotForeign(this->vm, this->index);
         auto wrapper = static_cast<ForeignWrapper<char>*>(ptr);
         return wrapper->type == std::type_index(type);
     }
@@ -64,8 +64,8 @@ namespace Tea {
         wrenInitConfiguration(&cfg);
 
         cfg.userData = static_cast<void*>(this);
-        cfg.writeFn  = [](WrenVM*, const char* str) { std::cout << str << std::flush; };
-        cfg.errorFn  = [](WrenVM*, WrenErrorType type, const char* module, int line, const char* message) {
+        cfg.writeFn = [](WrenVM*, const char* str) { std::cout << str << std::flush; };
+        cfg.errorFn = [](WrenVM*, WrenErrorType type, const char* module, int line, const char* message) {
             if (type == WrenErrorType::WREN_ERROR_COMPILE) {
                 std::cerr << "Compilation error (" << module << "@" << line << "): " << message << std::endl;
             } else if (type == WrenErrorType::WREN_ERROR_RUNTIME) {
@@ -75,8 +75,8 @@ namespace Tea {
             }
         };
         cfg.loadModuleFn = [](WrenVM* vm, const char* name) -> char* {
-            auto  scripting = static_cast<Scripting*>(wrenGetUserData(vm));
-            auto& engine    = scripting->get_engine();
+            auto scripting = static_cast<Scripting*>(wrenGetUserData(vm));
+            auto& engine = scripting->get_engine();
 
             std::ostringstream filename;
             filename << name << ".wren";
@@ -91,17 +91,17 @@ namespace Tea {
 
             return code;
         };
-        cfg.bindForeignMethodFn = [](WrenVM*     vm,
+        cfg.bindForeignMethodFn = [](WrenVM* vm,
                                      const char* module,
                                      const char* className,
-                                     bool        isStatic,
+                                     bool isStatic,
                                      const char* signature) -> void (*)(WrenVM*) {
             std::ostringstream full_signature;
             if (isStatic) full_signature << "static ";
             full_signature << module << "::" << className << "::" << signature;
 
             auto scripting = static_cast<Scripting*>(wrenGetUserData(vm));
-            auto entry     = scripting->methods.find(full_signature.str());
+            auto entry = scripting->methods.find(full_signature.str());
             if (entry != scripting->methods.end()) {
                 return entry->second;
             }
@@ -143,7 +143,7 @@ namespace Tea {
         // Then get a reusable call handle for Prelude::update that we can use
         wrenEnsureSlots(this->vm, 1);
         wrenGetVariable(this->vm, "tea/prelude", "Prelude", 0);
-        this->prelude_class_handle         = wrenGetSlotHandle(this->vm, 0);
+        this->prelude_class_handle = wrenGetSlotHandle(this->vm, 0);
         this->prelude_update_method_handle = wrenMakeCallHandle(this->vm, "update(_)");
     }
 

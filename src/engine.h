@@ -18,8 +18,8 @@ namespace Tea {
         Engine();
         ~Engine();
         AssetManager& get_assets();
-        Scripting&    get_scripting();
-        Platform&     get_platform();
+        Scripting& get_scripting();
+        Platform& get_platform();
 
         int run(std::string main_module, std::string main_class);
 
@@ -47,7 +47,7 @@ namespace Tea {
     private:
         std::unique_ptr<Platform> platform;
 
-        AssetManager               assets;
+        AssetManager assets;
         std::unique_ptr<Scripting> scripting;
 
         std::unordered_map<std::type_index, std::unique_ptr<Module>> modules;

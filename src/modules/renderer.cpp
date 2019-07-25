@@ -13,7 +13,7 @@
 
 #define MAX_VERTICES 1024 * 32
 
-static auto vertex_shader_source   = R"glsl(#version 300 es
+static auto vertex_shader_source = R"glsl(#version 300 es
     precision mediump float;
 
     in vec2 v_position;
@@ -53,8 +53,7 @@ namespace Tea {
         int w, h, channels_in_file;
 
         stbi_set_flip_vertically_on_load(true);
-        uint8_t* c_data =
-            stbi_load_from_memory(&asset.front(), asset.size(), &w, &h, &channels_in_file, 4);
+        uint8_t* c_data = stbi_load_from_memory(&asset.front(), asset.size(), &w, &h, &channels_in_file, 4);
         if (c_data == nullptr) {
             std::cerr << "Error loading image." << std::endl;
         }
@@ -77,7 +76,7 @@ namespace Tea {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        tex->width  = width;
+        tex->width = width;
         tex->height = height;
         return tex;
     }
@@ -86,11 +85,10 @@ namespace Tea {
 
     uint32_t Texture::get_width() { return this->width; }
     uint32_t Texture::get_height() { return this->height; }
-    GLuint   Texture::get_gl_texture() { return this->tex; }
+    GLuint Texture::get_gl_texture() { return this->tex; }
 
-
-    Color::Color(float r, float g, float b) : r(r), g(g), b(b), a(1) {}
-    Color::Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
+    Color::Color(float r, float g, float b): r(r), g(g), b(b), a(1) {}
+    Color::Color(float r, float g, float b, float a): r(r), g(g), b(b), a(a) {}
 
     bool get_shader_compile_error(GLuint shader, std::string& error) {
         GLint status;
@@ -126,7 +124,7 @@ namespace Tea {
         glGenBuffers(1, &this->vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-        this->vertex_shader   = glCreateShader(GL_VERTEX_SHADER);
+        this->vertex_shader = glCreateShader(GL_VERTEX_SHADER);
         this->fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
 
         glShaderSource(this->vertex_shader, 1, &vertex_shader_source, nullptr);
@@ -152,8 +150,8 @@ namespace Tea {
         glLinkProgram(this->program);
         glUseProgram(this->program);
 
-        GLint posAttrib   = glGetAttribLocation(this->program, "v_position");
-        GLint uvAttrib    = glGetAttribLocation(this->program, "v_uv");
+        GLint posAttrib = glGetAttribLocation(this->program, "v_position");
+        GLint uvAttrib = glGetAttribLocation(this->program, "v_uv");
         GLint colorAttrib = glGetAttribLocation(this->program, "v_color");
 
         glVertexAttribPointer(
@@ -162,12 +160,8 @@ namespace Tea {
         glVertexAttribPointer(
             uvAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, u)));
 
-        glVertexAttribPointer(colorAttrib,
-                              4,
-                              GL_FLOAT,
-                              GL_FALSE,
-                              sizeof(Vertex),
-                              reinterpret_cast<const void*>(offsetof(Vertex, r)));
+        glVertexAttribPointer(
+            colorAttrib, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, r)));
 
         glEnableVertexAttribArray(posAttrib);
         glEnableVertexAttribArray(uvAttrib);
@@ -176,8 +170,8 @@ namespace Tea {
         this->screen_size_uniform = glGetUniformLocation(this->program, "u_screen_size");
 
         std::vector<uint8_t> pixel_data = {255, 255, 255, 255};
-        this->pixel_texture             = Texture::create(pixel_data, 1, 1);
-        this->current_texture           = this->pixel_texture;
+        this->pixel_texture = Texture::create(pixel_data, 1, 1);
+        this->current_texture = this->pixel_texture;
     }
 
     void Renderer::bind(Tea::Scripting& s) {
@@ -308,7 +302,8 @@ namespace Tea {
                     static_cast<GLfloat>(platform.get_window_width()),
                     static_cast<GLfloat>(platform.get_window_height()));
         // TODO: This should probably be handled somewhere else?
-        glViewport(0, 0,
+        glViewport(0,
+                   0,
                    static_cast<GLsizei>(platform.get_window_width()),
                    static_cast<GLsizei>(platform.get_window_height()));
 
