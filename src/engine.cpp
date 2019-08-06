@@ -2,6 +2,7 @@
 #include "bindings.h"
 #include "modules/input.h"
 #include "modules/renderer.h"
+#include "modules/audio.h"
 
 #include <wren.hpp>
 
@@ -15,6 +16,7 @@ namespace Tea {
         this->scripting = std::unique_ptr<Scripting>(new Scripting(*this));
         this->platform = Platform::init();
 
+        this->add_module<Audio>();
         this->add_module<Input>();
         this->add_module<Renderer>();
 

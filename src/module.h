@@ -7,6 +7,8 @@ namespace Tea {
     class Module {
     public:
         explicit Module(Engine& engine): engine(engine) {}
+        Module(const Module&) = delete;
+        Module(Module&&) = delete;
 
         virtual ~Module() {}
 

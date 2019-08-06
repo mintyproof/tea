@@ -4,6 +4,11 @@ project(tea C CXX)
 
 # GLFW
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
+    set(GLFW_BUILD_EXAMPLES OFF)
+    set(GLFW_BUILD_TESTS OFF)
+    set(GLFW_BUILD_DOCS OFF)
+    set(GLFW_INSTALL OFF)
+
     add_subdirectory(deps/glfw)
 endif()
 
@@ -34,6 +39,9 @@ target_compile_definitions(wren PRIVATE _CRT_SECURE_NO_WARNINGS) # To prevent sp
 add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE deps/stb)
 
+# PortAudio
+add_subdirectory(deps/portaudio)
+
 # Resources
 include(deps/cmrc/CMakeRC.cmake)
 cmrc_add_resource_library(tea-res NAMESPACE tea WHENCE res/
@@ -43,6 +51,8 @@ cmrc_add_resource_library(tea-res NAMESPACE tea WHENCE res/
 
 # Engine
 set(ENGINE_SOURCES
+        src/modules/audio.cpp
+        src/modules/audio.h
         src/modules/input.cpp
         src/modules/input.h
         src/modules/renderer.cpp
@@ -64,12 +74,12 @@ set(ENGINE_SOURCES
         src/scripting.cpp
         src/utils.cpp
         src/utils.h
-        src/vec.h)
+        src/vec.h src/modules/audio.cpp src/modules/audio.h)
 
 add_executable(tea ${ENGINE_SOURCES})
 set_target_properties(tea PROPERTIES C_STANDARD 11 CXX_STANDARD 11)
 target_compile_features(tea PUBLIC cxx_std_11)
-target_link_libraries(tea tea-res wren stb glfw glad)
+target_link_libraries(tea tea-res wren stb glfw glad portaudio_static)
 if (MSVC)
     target_compile_options(tea PRIVATE /W4 /wd4100 /D _CRT_SECURE_NO_WARNINGS)
 else ()
