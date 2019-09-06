@@ -17,7 +17,7 @@ namespace Tea {
         return wrenGetSlotDouble(this->vm, this->index);
     }
 
-    void Slot::set_num(double new_num) { wrenSetSlotDouble(this->vm, this->index, this->index); }
+    void Slot::set_num(double new_num) { wrenSetSlotDouble(this->vm, this->index, new_num); }
 
     bool Slot::is_str() const { return wrenGetSlotType(this->vm, this->index) == WREN_TYPE_STRING; }
 
