@@ -27,9 +27,10 @@ namespace Tea {
                                       void* userData);
 
         // lol voidptr, blame portaudio
+        // may be null if audio backend failed, handle this gracefully (dummy impl)
         void* stream;
 
-        uint64_t currentSample;
+        uint64_t current_sample;
     };
 }
 

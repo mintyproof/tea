@@ -1,35 +1,39 @@
 #include "audio.h"
 
-#include <sstream>
 #include <string>
 
 #include <portaudio.h>
 #include <cmath>
-#include <iostream>
+
+#include <fmt/core.h>
 
 void validate_pa_call(PaError err, const std::string& prefix) {
     if (err == paNoError) return;
-    std::ostringstream errMsg;
-    errMsg << prefix << ": " << Pa_GetErrorText(err);
-    throw std::runtime_error(errMsg.str());
+    throw std::runtime_error(fmt::format("{}: {}", prefix, Pa_GetErrorText(err)));
 }
 
 #define PI 3.141592653
 
 namespace Tea {
     Audio::Audio(Engine& engine): Module(engine) {
-        std::cout << "Initializing audio backend:" << std::endl;
+        fmt::print("Initializing audio backend:\n");
         validate_pa_call(Pa_Initialize(), "could not initialize portaudio");
-        validate_pa_call(Pa_OpenDefaultStream(&this->stream, 0, 2, paFloat32, 44100, paFramesPerBufferUnspecified, audio_process_callback, this), "could not open default stream");
 
-        PaDeviceIndex default_output = Pa_GetDefaultOutputDevice();
-        const PaDeviceInfo *default_output_info = Pa_GetDeviceInfo(default_output);
-        const PaStreamInfo *stream_info = Pa_GetStreamInfo(this->stream);
+        fmt::print(" - {}\n", Pa_GetVersionText());
 
-        std::cout << " - " << Pa_GetVersionText() << std::endl;
-        std::cout << " - Default output device: " << default_output_info->name << " (" << stream_info->sampleRate << " Hz, " << stream_info->outputLatency * 1000 << "ms latency)" << std::endl;
+        PaError open_stream_err = Pa_OpenDefaultStream(&this->stream, 0, 2, paFloat32,
+                44100, paFramesPerBufferUnspecified, audio_process_callback, this);
+        if (open_stream_err != paNoError) {
+            fmt::print(" - WARN: Could not open default stream: {}\n", Pa_GetErrorText(open_stream_err));
+        } else {
+            PaDeviceIndex default_output = Pa_GetDefaultOutputDevice();
+            const PaDeviceInfo *default_output_info = Pa_GetDeviceInfo(default_output);
+            const PaStreamInfo *stream_info = Pa_GetStreamInfo(this->stream);
 
-        validate_pa_call(Pa_StartStream(this->stream), "could not start stream");
+            fmt::print(" - Default audio device: {}\n", default_output_info->name);
+            fmt::print(" - {} Hz, {}ms latency\n", stream_info->sampleRate, stream_info->outputLatency * 1000);
+            validate_pa_call(Pa_StartStream(this->stream), "could not start stream");
+        }
     }
 
     Audio::~Audio() {
@@ -53,9 +57,9 @@ namespace Tea {
 
         float freq = 440.0; // A4
         for (uint32_t i = 0; i < frame_count; i++) {
-            audio->currentSample++;
+            audio->current_sample++;
 
-            float sample = sin(freq * 2 * PI * audio->currentSample / audio->sample_rate());
+            float sample = sin(freq * 2 * PI * audio->current_sample / audio->sample_rate());
 
             // Two interleaved channels
             *output++ = sample;
@@ -66,6 +70,8 @@ namespace Tea {
     }
 
     uint32_t Audio::sample_rate() {
+        if (!this->stream) return -1;
+
         const PaStreamInfo *stream_info = Pa_GetStreamInfo(this->stream);
         return static_cast<uint32_t>(stream_info->sampleRate);
     }

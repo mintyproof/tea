@@ -70,7 +70,7 @@ namespace Tea {
 
             auto image = ImageLoader::decode_image(data);
             auto tex = Texture::create(*image);
-            s.slot(0).set_native_type(tex, 0);
+            s.slot(0).set_native_type(std::move(tex), 0);
         });
 
         s.bind("tea/graphics::Texture::width", [](Tea::Scripting& s) {

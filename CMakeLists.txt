@@ -43,8 +43,8 @@ target_include_directories(stb INTERFACE deps/stb)
 add_subdirectory(deps/portaudio)
 
 # {fmt}
-add_library(fmt INTERFACE)
-target_include_directories(fmt INTERFACE deps/fmt/include)
+add_library(fmt deps/fmt/src/format.cc)
+target_include_directories(fmt PUBLIC deps/fmt/include)
 
 # Resources
 include(deps/cmrc/CMakeRC.cmake)
