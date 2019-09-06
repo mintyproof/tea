@@ -42,6 +42,10 @@ target_include_directories(stb INTERFACE deps/stb)
 # PortAudio
 add_subdirectory(deps/portaudio)
 
+# {fmt}
+add_library(fmt INTERFACE)
+target_include_directories(fmt INTERFACE deps/fmt/include)
+
 # Resources
 include(deps/cmrc/CMakeRC.cmake)
 cmrc_add_resource_library(tea-res NAMESPACE tea WHENCE res/
@@ -83,7 +87,7 @@ set(ENGINE_SOURCES
 add_executable(tea ${ENGINE_SOURCES})
 set_target_properties(tea PROPERTIES C_STANDARD 11 CXX_STANDARD 11)
 target_compile_features(tea PUBLIC cxx_std_11)
-target_link_libraries(tea tea-res wren stb glfw glad portaudio_static)
+target_link_libraries(tea tea-res wren stb glfw glad portaudio_static fmt)
 if (MSVC)
     target_compile_options(tea PRIVATE /W4 /wd4100 /D _CRT_SECURE_NO_WARNINGS)
 else ()

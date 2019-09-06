@@ -16,3 +16,6 @@
 [submodule "deps/portaudio"]
 	path = deps/portaudio
 	url = https://git.assembla.com/portaudio.git
+[submodule "deps/fmt"]
+	path = deps/fmt
+	url = https://github.com/fmtlib/fmt
