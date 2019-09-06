@@ -2,6 +2,7 @@
 #include "imageloader.h"
 
 #define STB_IMAGE_IMPLEMENTATION
+#define STBI_ONLY_PNG
 #include <stb_image.h>
 
 std::unique_ptr<Tea::Image> Tea::ImageLoader::decode_image(const std::vector<uint8_t> &image_data) {
