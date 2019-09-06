@@ -6,7 +6,6 @@
 #include "modules/input.h"
 #include "modules/renderer.h"
 #include "scripting.h"
-#include "assets/imageloader.h"
 
 namespace Tea {
     void bind_graphics(Scripting& s) {
@@ -62,13 +61,12 @@ namespace Tea {
         s.bind("static tea/graphics::Texture::load(_)", [](Tea::Scripting& s) {
             auto filename = s.slot(1).as_str();
 
-            std::vector<uint8_t> data;
-            if (!s.get_engine().get_assets().load_asset(filename, data)) {
+            auto image = s.get_engine().get_assets().load<Image>(filename);
+            if (!image) {
                 s.error("Could not find file.");
                 return;
             }
 
-            auto image = ImageLoader::decode_image(data);
             auto tex = Texture::create(*image);
             s.slot(0).set_native_type(std::move(tex), 0);
         });

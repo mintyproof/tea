@@ -82,7 +82,7 @@ namespace Tea {
             filename << name << ".wren";
 
             std::vector<uint8_t> data;
-            if (!engine.get_assets().load_asset(filename.str(), data)) return nullptr;
+            if (!engine.get_assets().load_raw(filename.str(), data)) return nullptr;
 
             // Using C strings here because Wren expects a malloc()'d char* for it to take ownership of
             char* code = static_cast<char*>(malloc(data.size() + 1));

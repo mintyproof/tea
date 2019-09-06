@@ -55,10 +55,10 @@ cmrc_add_resource_library(tea-res NAMESPACE tea WHENCE res/
 
 # Engine
 set(ENGINE_SOURCES
+        src/assets/asset.cpp
+        src/assets/asset.h
         src/assets/image.cpp
         src/assets/image.h
-        src/assets/imageloader.cpp
-        src/assets/imageloader.h
         src/modules/audio.cpp
         src/modules/audio.h
         src/modules/input.cpp

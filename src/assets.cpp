@@ -11,7 +11,7 @@ namespace Tea {
     AssetManager::AssetManager() = default;
     AssetManager::~AssetManager() = default;
 
-    bool AssetManager::load_asset(std::string name, std::vector<uint8_t>& out) {
+    bool AssetManager::load_raw(const std::string &name, std::vector<uint8_t>& out) {
         // Check embedded resources
         auto fs = cmrc::tea::get_filesystem();
         if (fs.exists(name)) {
@@ -32,10 +32,10 @@ namespace Tea {
         return true;
     }
 
-    bool AssetManager::load_asset(std::string name, std::string& out) {
+    bool AssetManager::load_string(const std::string &name, std::string& out) {
         // TODO: don't copy again here
         std::vector<uint8_t> data;
-        if (!this->load_asset(name, data)) return false;
+        if (!this->load_raw(name, data)) return false;
         out.insert(out.begin(), data.begin(), data.end());
         return true;
     }

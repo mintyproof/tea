@@ -5,15 +5,17 @@
 #include <vector>
 
 #include "../color.h"
+#include "asset.h"
 
 namespace Tea {
     /**
      * Represents an image loaded into memory in uncompressed RGBA8888 form.
      */
-    class Image {
+    class Image: public Asset {
     public:
         Image(uint32_t width, uint32_t height, Color fill_color);
         Image(uint32_t width, uint32_t height, std::vector<uint8_t>&& image_data);
+        static std::unique_ptr<Image> load(const std::string &filename, const std::vector<uint8_t> &&data);
 
         uint32_t get_width() const;
         uint32_t get_height() const;
@@ -29,4 +31,4 @@ namespace Tea {
 }
 
 
-#endif //TEA_IMAGE_H
+#endif
