@@ -51,6 +51,10 @@ cmrc_add_resource_library(tea-res NAMESPACE tea WHENCE res/
 
 # Engine
 set(ENGINE_SOURCES
+        src/assets/image.cpp
+        src/assets/image.h
+        src/assets/imageloader.cpp
+        src/assets/imageloader.h
         src/modules/audio.cpp
         src/modules/audio.h
         src/modules/input.cpp
@@ -74,7 +78,7 @@ set(ENGINE_SOURCES
         src/scripting.cpp
         src/utils.cpp
         src/utils.h
-        src/vec.h src/modules/audio.cpp src/modules/audio.h)
+        src/vec.h)
 
 add_executable(tea ${ENGINE_SOURCES})
 set_target_properties(tea PROPERTIES C_STANDARD 11 CXX_STANDARD 11)

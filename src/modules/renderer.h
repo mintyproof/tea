@@ -8,6 +8,7 @@
 #include <glad/glad.h>
 #include "../color.h"
 #include "../module.h"
+#include "../assets/image.h"
 
 namespace Tea {
     class Engine;
@@ -23,10 +24,12 @@ namespace Tea {
         uint32_t abgr;
     };
 
+    /**
+     * Represents a texture loaded into graphics memory, ready to be rendered.
+     */
     class Texture {
     public:
-        static std::shared_ptr<Texture> load(const std::vector<uint8_t>& data);
-        static std::shared_ptr<Texture> create(const std::vector<uint8_t>& data, uint32_t width, uint32_t height);
+        static std::shared_ptr<Texture> create(const Image& image);
         ~Texture();
 
         Texture(const Texture&) = delete;

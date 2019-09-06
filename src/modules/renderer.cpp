@@ -2,15 +2,11 @@
 
 #include <iostream>
 
-#define STB_IMAGE_IMPLEMENTATION
 #include <glad/glad.h>
-#include <stb_image.h>
-#include <sstream>
 #include <wren.hpp>
 
 #include "../assets.h"
 #include "../engine.h"
-#include "../scripting.h"
 
 #define MAX_VERTICES 1024 * 32
 
@@ -50,35 +46,20 @@ static auto fragment_shader_source = R"glsl(#version 300 es
 )glsl";
 
 namespace Tea {
-    std::shared_ptr<Texture> Texture::load(const std::vector<uint8_t>& asset) {
-        int w, h, channels_in_file;
-
-        stbi_set_flip_vertically_on_load(true);
-        uint8_t* c_data = stbi_load_from_memory(&asset.front(), asset.size(), &w, &h, &channels_in_file, 4);
-        if (c_data == nullptr) {
-            std::cerr << "Error loading image." << std::endl;
-        }
-
-        std::vector<uint8_t> data(c_data, c_data + (w * h * 4));
-
-        stbi_image_free(c_data);
-        return Texture::create(data, w, h);
-    }
-
-    std::shared_ptr<Texture> Texture::create(const std::vector<uint8_t>& data, uint32_t width, uint32_t height) {
+    std::shared_ptr<Texture> Texture::create(const Image& image) {
         std::shared_ptr<Texture> tex(new Texture());
 
         glGenTextures(1, &tex->tex);
         glBindTexture(GL_TEXTURE_2D, tex->tex);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data.front());
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.get_width(), image.get_height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, &image.get_data());
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        tex->width = width;
-        tex->height = height;
+        tex->width = image.get_width();
+        tex->height = image.get_height();
         return tex;
     }
 
@@ -171,8 +152,8 @@ namespace Tea {
 
         this->screen_size_uniform = glGetUniformLocation(this->program, "u_screen_size");
 
-        std::vector<uint8_t> pixel_data = {255, 255, 255, 255};
-        this->pixel_texture = Texture::create(pixel_data, 1, 1);
+        Image pixel_image(1, 1, Color::white());
+        this->pixel_texture = Texture::create(pixel_image);
         this->current_texture = this->pixel_texture;
     }
 

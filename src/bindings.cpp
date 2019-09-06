@@ -6,6 +6,7 @@
 #include "modules/input.h"
 #include "modules/renderer.h"
 #include "scripting.h"
+#include "assets/imageloader.h"
 
 namespace Tea {
     void bind_graphics(Scripting& s) {
@@ -67,7 +68,9 @@ namespace Tea {
                 return;
             }
 
-            s.slot(0).set_native_type(Texture::load(data), 0);
+            auto image = ImageLoader::decode_image(data);
+            auto tex = Texture::create(*image);
+            s.slot(0).set_native_type(tex, 0);
         });
 
         s.bind("tea/graphics::Texture::width", [](Tea::Scripting& s) {
