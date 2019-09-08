@@ -4,6 +4,8 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "assets/image.h"
+#include "assets/sound.h"
 
 namespace Tea {
     class AssetManager {
@@ -14,11 +16,8 @@ namespace Tea {
         bool load_raw(const std::string& path, std::vector<uint8_t>& out);
         bool load_string(const std::string& path, std::string& out);
 
-        template <class T> std::unique_ptr<T> load(const std::string& path) {
-            std::vector<uint8_t> data;
-            if (!this->load_raw(path, data)) return std::unique_ptr<T>(nullptr);
-            return T::load(path, std::move(data));
-        }
+        std::unique_ptr<Image> load_image(const std::string& path);
+        std::unique_ptr<Sound> load_sound(const std::string& path);
     };
 }
 

@@ -61,7 +61,7 @@ namespace Tea {
         s.bind("static tea/graphics::Texture::load(_)", [](Tea::Scripting& s) {
             auto filename = s.slot(1).as_str();
 
-            auto image = s.get_engine().get_assets().load<Image>(filename);
+            auto image = s.get_engine().get_assets().load_image(filename);
             if (!image) {
                 s.error("Could not find file.");
                 return;

@@ -1,4 +1,6 @@
 #include "assets.h"
+#include "assets/sound_loader.h"
+#include "assets/image_loader.h"
 
 #include <fstream>
 #include <iostream>
@@ -39,4 +41,17 @@ namespace Tea {
         out.insert(out.begin(), data.begin(), data.end());
         return true;
     }
+
+    std::unique_ptr<Image> AssetManager::load_image(const std::string &path) {
+        std::vector<uint8_t> data;
+        if (!load_raw(path, data)) return std::unique_ptr<Image>(nullptr);
+        return ImageLoader::load(std::move(data));
+    }
+
+    std::unique_ptr<Sound> AssetManager::load_sound(const std::string &path) {
+        std::vector<uint8_t> data;
+        if (!load_raw(path, data)) return std::unique_ptr<Sound>(nullptr);
+        return SoundLoader::load_ogg(std::move(data));
+    }
+
 }

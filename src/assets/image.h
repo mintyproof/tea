@@ -15,7 +15,6 @@ namespace Tea {
     public:
         Image(uint32_t width, uint32_t height, Color fill_color);
         Image(uint32_t width, uint32_t height, std::vector<uint8_t>&& image_data);
-        static std::unique_ptr<Image> load(const std::string &filename, const std::vector<uint8_t> &&data);
 
         uint32_t get_width() const;
         uint32_t get_height() const;

@@ -35,9 +35,14 @@ target_include_directories(wren PRIVATE deps/wren/src/optional deps/wren/src/vm)
 target_include_directories(wren BEFORE PUBLIC deps/wren/src/include)  # BEFORE to override system wren.h if existing
 target_compile_definitions(wren PRIVATE _CRT_SECURE_NO_WARNINGS) # To prevent spewing errors on MSVC
 
-# STB
+# stb
 add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE deps/stb)
+
+# stb_vorbis
+add_library(stb_vorbis deps/stb/stb_vorbis.c)
+target_compile_definitions(stb_vorbis PUBLIC STB_VORBIS_NO_STDIO)
+target_compile_definitions(stb_vorbis INTERFACE STB_VORBIS_HEADER_ONLY)
 
 # PortAudio
 add_subdirectory(deps/portaudio)
@@ -59,6 +64,16 @@ set(ENGINE_SOURCES
         src/assets/asset.h
         src/assets/image.cpp
         src/assets/image.h
+        src/assets/image_loader.cpp
+        src/assets/image_loader.h
+        src/assets/ogg_sound.cpp
+        src/assets/ogg_sound.h
+        src/assets/ogg_sound_player.cpp
+        src/assets/ogg_sound_player.h
+        src/assets/sound.h
+        src/assets/sound_loader.cpp
+        src/assets/sound_loader.h
+        src/assets/sound_player.h
         src/modules/audio.cpp
         src/modules/audio.h
         src/modules/input.cpp
@@ -87,7 +102,7 @@ set(ENGINE_SOURCES
 add_executable(tea ${ENGINE_SOURCES})
 set_target_properties(tea PROPERTIES C_STANDARD 11 CXX_STANDARD 11)
 target_compile_features(tea PUBLIC cxx_std_11)
-target_link_libraries(tea tea-res wren stb glfw glad portaudio_static fmt)
+target_link_libraries(tea tea-res wren stb stb_vorbis glfw glad portaudio_static fmt)
 if (MSVC)
     target_compile_options(tea PRIVATE /W4 /wd4100 /D _CRT_SECURE_NO_WARNINGS)
 else ()

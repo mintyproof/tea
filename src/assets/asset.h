@@ -1,8 +1,7 @@
 #ifndef TEA_ASSET_H
 #define TEA_ASSET_H
 
-#include <memory>
-#include <vector>
+#include <string>
 
 namespace Tea {
     class Asset {
