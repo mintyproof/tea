@@ -16,8 +16,6 @@ class Graphics {
 }
 
 foreign class Texture {
-    foreign static load(filename)
-
     foreign width
     foreign height
 }

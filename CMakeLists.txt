@@ -54,13 +54,14 @@ target_include_directories(fmt PUBLIC deps/fmt/include)
 # Resources
 include(deps/cmrc/CMakeRC.cmake)
 cmrc_add_resource_library(tea-res NAMESPACE tea WHENCE res/
+        res/tea/assets.wren
         res/tea/input.wren
         res/tea/graphics.wren
         res/tea/prelude.wren)
 
 # Engine
 set(ENGINE_SOURCES
-        src/assets/asset.cpp src/assets/asset.h
+        src/assets/asset.h
         src/assets/assets.cpp src/assets/assets.h
         src/assets/image/image.cpp src/assets/image/image.h
         src/assets/image/image_loader.cpp src/assets/image/image_loader.h

@@ -1,3 +1,4 @@
+import "tea/assets" for Assets
 import "tea/graphics" for Graphics, Texture, Color
 import "tea/input" for Keys, Keyboard
 
@@ -7,8 +8,8 @@ class Main {
         _green = Color.rgb(0x00FF00)
         _blue = Color.rgb(0x0000FF)
 
-        _tex1 = Texture.load("hello.png")
-        _tex2 = Texture.load("test.png")
+        _tex1 = Assets.texture("hello.png")
+        _tex2 = Assets.texture("test.png")
 
         _x = 300
         _speed = 64

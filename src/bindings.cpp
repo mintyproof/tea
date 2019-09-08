@@ -8,6 +8,35 @@
 #include "scripting.h"
 
 namespace Tea {
+    void bind_assets(Scripting& s) {
+        s.bind("static tea/assets::Assets::texture(_)", [](Tea::Scripting& s) {
+            auto filename = s.slot(1).as_str();
+
+            auto image = s.get_engine().get_assets().load_image(filename);
+            if (!image) {
+                s.error("Could not find file.");
+                return;
+            }
+
+            auto tex = Texture::create(*image);
+            s.slot(0).set_native_type(std::move(tex), 0);
+        });
+
+        s.bind("static tea/assets::Assets::sound(_)", [](Tea::Scripting& s) {
+            auto filename = s.slot(1).as_str();
+
+            auto sound = s.get_engine().get_assets().load_sound(filename);
+            if (!sound) {
+                s.error("Could not find file.");
+                return;
+            }
+
+            // "turn" the unique_ptr into a shared_ptr and given Wren *that*
+            std::shared_ptr<Sound> ptr(std::move(sound));
+            s.slot(0).set_native_type(std::move(ptr), 0);
+        });
+    }
+
     void bind_graphics(Scripting& s) {
         s.bind("static tea/graphics::Graphics::clear(_)", [](Tea::Scripting& s) {
             Color color = s.slot(1).get_native_type<Color>();
@@ -56,19 +85,6 @@ namespace Tea {
 
         s.bind("static tea/graphics::Graphics::setTexture(_)", [](Tea::Scripting& s) {
             s.get_engine().get_module<Renderer>()->set_texture(s.slot(1).get_native_type<std::shared_ptr<Texture>>());
-        });
-
-        s.bind("static tea/graphics::Texture::load(_)", [](Tea::Scripting& s) {
-            auto filename = s.slot(1).as_str();
-
-            auto image = s.get_engine().get_assets().load_image(filename);
-            if (!image) {
-                s.error("Could not find file.");
-                return;
-            }
-
-            auto tex = Texture::create(*image);
-            s.slot(0).set_native_type(std::move(tex), 0);
         });
 
         s.bind("tea/graphics::Texture::width", [](Tea::Scripting& s) {
@@ -175,6 +191,7 @@ namespace Tea {
     }
 
     void bind(Scripting& s) {
+        bind_assets(s);
         bind_graphics(s);
         bind_input(s);
     }

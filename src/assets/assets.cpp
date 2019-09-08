@@ -53,5 +53,4 @@ namespace Tea {
         if (!load_raw(path, data)) return std::unique_ptr<Sound>(nullptr);
         return SoundLoader::load_ogg(std::move(data));
     }
-
 }
