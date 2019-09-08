@@ -10,6 +10,7 @@
 #include "../module.h"
 #include "../assets/image/image.h"
 #include "../graphics/texture.h"
+#include "../graphics/shader.h"
 
 namespace Tea {
     class Engine;
@@ -40,6 +41,7 @@ namespace Tea {
         void flush();
 
         void set_texture(std::shared_ptr<Texture>& tex);
+        void set_shader(std::shared_ptr<Shader>& shader);
 
         void rect(float x, float y, float w, float h, Color color);
         void draw_texture(std::shared_ptr<Texture>& tex, float x, float y, float w, float h, Color color);
@@ -48,13 +50,14 @@ namespace Tea {
     private:
         GLuint vbo;
 
-        GLuint vertex_shader;
-        GLuint fragment_shader;
-        GLuint program;
         GLint screen_size_uniform;
 
+        // TODO: should these be shared_ptrs? Or should we have a unique_ptr of pixel_texture and default_shader
         std::shared_ptr<Texture> current_texture;
         std::shared_ptr<Texture> pixel_texture;
+
+        std::shared_ptr<Shader> current_shader;
+        std::shared_ptr<Shader> default_shader;
 
         std::vector<Vertex> vertices;
     };

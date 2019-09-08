@@ -70,6 +70,7 @@ set(ENGINE_SOURCES
         src/assets/sound/sound_loader.cpp src/assets/sound/sound_loader.h
         src/assets/sound/sound_player.h
         src/graphics/color.cpp src/graphics/color.h
+        src/graphics/shader.cpp src/graphics/shader.h
         src/graphics/texture.cpp src/graphics/texture.h
         src/modules/audio.cpp src/modules/audio.h
         src/modules/input.cpp src/modules/input.h

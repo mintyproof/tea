@@ -46,29 +46,10 @@ static auto fragment_shader_source = R"glsl(#version 300 es
 )glsl";
 
 namespace Tea {
-    bool get_shader_compile_error(GLuint shader, std::string& error) {
-        GLint status;
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-
-        if (status) return false;
-
-        GLint length;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-
-        error.resize(length);
-        glGetShaderInfoLog(shader, length, nullptr, &error.front());
-        return true;
-    }
-
     Renderer::Renderer(Engine& engine): Module(engine) { this->init(); }
 
     Renderer::~Renderer() {
         glDeleteBuffers(1, &this->vbo);
-        glDetachShader(this->program, this->vertex_shader);
-        glDetachShader(this->program, this->fragment_shader);
-        glDeleteProgram(this->program);
-        glDeleteShader(this->vertex_shader);
-        glDeleteShader(this->fragment_shader);
     }
 
     void Renderer::init() {
@@ -80,35 +61,12 @@ namespace Tea {
         glGenBuffers(1, &this->vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-        this->vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-        this->fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+        this->default_shader = Shader::compile(vertex_shader_source, fragment_shader_source);
+        glUseProgram(this->default_shader->program);
 
-        glShaderSource(this->vertex_shader, 1, &vertex_shader_source, nullptr);
-        glShaderSource(this->fragment_shader, 1, &fragment_shader_source, nullptr);
-
-        glCompileShader(this->vertex_shader);
-        glCompileShader(this->fragment_shader);
-
-        std::string error;
-        if (get_shader_compile_error(this->vertex_shader, error)) {
-            std::cerr << "Error compiling vertex shader: " << error << std::endl;
-            exit(1);
-        }
-
-        if (get_shader_compile_error(this->fragment_shader, error)) {
-            std::cerr << "Error compiling fragment shader: " << error << std::endl;
-            exit(1);
-        }
-
-        this->program = glCreateProgram();
-        glAttachShader(this->program, this->vertex_shader);
-        glAttachShader(this->program, this->fragment_shader);
-        glLinkProgram(this->program);
-        glUseProgram(this->program);
-
-        GLint posAttrib = glGetAttribLocation(this->program, "v_position");
-        GLint uvAttrib = glGetAttribLocation(this->program, "v_uv");
-        GLint colorAttrib = glGetAttribLocation(this->program, "v_color");
+        GLint posAttrib = glGetAttribLocation(this->default_shader->program, "v_position");
+        GLint uvAttrib = glGetAttribLocation(this->default_shader->program, "v_uv");
+        GLint colorAttrib = glGetAttribLocation(this->default_shader->program, "v_color");
 
         glVertexAttribPointer(
             posAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, x)));
@@ -127,7 +85,7 @@ namespace Tea {
         glEnableVertexAttribArray(uvAttrib);
         glEnableVertexAttribArray(colorAttrib);
 
-        this->screen_size_uniform = glGetUniformLocation(this->program, "u_screen_size");
+        this->screen_size_uniform = glGetUniformLocation(this->default_shader->program, "u_screen_size");
 
         Image pixel_image(1, 1, Color::white());
         this->pixel_texture = Texture::create(pixel_image);
@@ -167,6 +125,14 @@ namespace Tea {
     void Renderer::set_texture(std::shared_ptr<Texture>& tex) {
         if (this->current_texture->get_gl_texture() != tex->get_gl_texture() && !this->vertices.empty()) flush();
         this->current_texture = tex;
+    }
+
+    void Renderer::set_shader(std::shared_ptr<Shader> &shader) {
+        if (this->current_shader->program != shader->program && !this->vertices.empty()) flush();
+        this->current_shader = shader;
+        glUseProgram(shader->program);
+
+        // TODO: Rebind vertex attrib pointers and such where relevant
     }
 
     void Renderer::rect(float x, float y, float w, float h, Color color) {
