@@ -6,9 +6,10 @@
 #include <vector>
 
 #include <glad/glad.h>
-#include "../color.h"
+#include "../graphics/color.h"
 #include "../module.h"
-#include "../assets/image.h"
+#include "../assets/image/image.h"
+#include "../graphics/texture.h"
 
 namespace Tea {
     class Engine;
@@ -22,30 +23,6 @@ namespace Tea {
         // OpenGL reads this backwards, so storing this in agbr format (little endian)
         // means it reads the vec4 [r, g, b, a]
         uint32_t abgr;
-    };
-
-    /**
-     * Represents a texture loaded into graphics memory, ready to be rendered.
-     */
-    class Texture {
-    public:
-        static std::shared_ptr<Texture> create(const Image& image);
-        ~Texture();
-
-        Texture(const Texture&) = delete;
-        Texture& operator=(const Texture&) = delete;
-
-        uint32_t get_width();
-        uint32_t get_height();
-
-        GLuint get_gl_texture();
-
-    private:
-        Texture() = default;
-
-        GLuint tex;
-        uint32_t width;
-        uint32_t height;
     };
 
     class Renderer: public Module {

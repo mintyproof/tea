@@ -1,6 +1,6 @@
 #include "assets.h"
-#include "assets/sound_loader.h"
-#include "assets/image_loader.h"
+#include "sound/sound_loader.h"
+#include "image/image_loader.h"
 
 #include <fstream>
 #include <iostream>

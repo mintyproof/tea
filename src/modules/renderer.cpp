@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 #include <wren.hpp>
 
-#include "../assets.h"
+#include "../assets/assets.h"
 #include "../engine.h"
 
 #define MAX_VERTICES 1024 * 32
@@ -46,29 +46,6 @@ static auto fragment_shader_source = R"glsl(#version 300 es
 )glsl";
 
 namespace Tea {
-    std::shared_ptr<Texture> Texture::create(const Image& image) {
-        std::shared_ptr<Texture> tex(new Texture());
-
-        glGenTextures(1, &tex->tex);
-        glBindTexture(GL_TEXTURE_2D, tex->tex);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.get_width(), image.get_height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, &image.get_data());
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        tex->width = image.get_width();
-        tex->height = image.get_height();
-        return tex;
-    }
-
-    Texture::~Texture() { glDeleteTextures(1, &this->tex); }
-
-    uint32_t Texture::get_width() { return this->width; }
-    uint32_t Texture::get_height() { return this->height; }
-    GLuint Texture::get_gl_texture() { return this->tex; }
-
     bool get_shader_compile_error(GLuint shader, std::string& error) {
         GLint status;
         glGetShaderiv(shader, GL_COMPILE_STATUS, &status);

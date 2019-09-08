@@ -1,7 +1,7 @@
 #include "bindings.h"
 
 #include <memory>
-#include "color.h"
+#include "graphics/color.h"
 #include "engine.h"
 #include "modules/input.h"
 #include "modules/renderer.h"

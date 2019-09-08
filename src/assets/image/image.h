@@ -4,8 +4,8 @@
 #include <cstdint>
 #include <vector>
 
-#include "../color.h"
-#include "asset.h"
+#include "../../graphics/color.h"
+#include "../asset.h"
 
 namespace Tea {
     /**

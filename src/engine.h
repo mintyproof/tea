@@ -6,7 +6,7 @@
 #include <typeindex>
 #include <unordered_map>
 
-#include "assets.h"
+#include "assets/assets.h"
 #include "module.h"
 #include "platform.h"
 #include "scripting.h"

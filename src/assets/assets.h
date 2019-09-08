@@ -4,8 +4,8 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "assets/image.h"
-#include "assets/sound.h"
+#include "image/image.h"
+#include "sound/sound.h"
 
 namespace Tea {
     class AssetManager {

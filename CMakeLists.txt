@@ -60,43 +60,28 @@ cmrc_add_resource_library(tea-res NAMESPACE tea WHENCE res/
 
 # Engine
 set(ENGINE_SOURCES
-        src/assets/asset.cpp
-        src/assets/asset.h
-        src/assets/image.cpp
-        src/assets/image.h
-        src/assets/image_loader.cpp
-        src/assets/image_loader.h
-        src/assets/ogg_sound.cpp
-        src/assets/ogg_sound.h
-        src/assets/ogg_sound_player.cpp
-        src/assets/ogg_sound_player.h
-        src/assets/sound.h
-        src/assets/sound_loader.cpp
-        src/assets/sound_loader.h
-        src/assets/sound_player.h
-        src/modules/audio.cpp
-        src/modules/audio.h
-        src/modules/input.cpp
-        src/modules/input.h
-        src/modules/renderer.cpp
-        src/modules/renderer.h
-        src/platforms/platform_glfw.cpp
-        src/platforms/platform_glfw.h
-        src/assets.cpp
-        src/assets.h
-        src/bindings.cpp
-        src/bindings.h
-        src/color.cpp
-        src/color.h
-        src/engine.cpp
-        src/engine.h
+        src/assets/asset.cpp src/assets/asset.h
+        src/assets/assets.cpp src/assets/assets.h
+        src/assets/image/image.cpp src/assets/image/image.h
+        src/assets/image/image_loader.cpp src/assets/image/image_loader.h
+        src/assets/sound/ogg_sound.cpp src/assets/sound/ogg_sound.h
+        src/assets/sound/ogg_sound_player.cpp src/assets/sound/ogg_sound_player.h
+        src/assets/sound/sound.h
+        src/assets/sound/sound_loader.cpp src/assets/sound/sound_loader.h
+        src/assets/sound/sound_player.h
+        src/graphics/color.cpp src/graphics/color.h
+        src/graphics/texture.cpp src/graphics/texture.h
+        src/modules/audio.cpp src/modules/audio.h
+        src/modules/input.cpp src/modules/input.h
+        src/modules/renderer.cpp src/modules/renderer.h
+        src/platforms/platform_glfw.cpp src/platforms/platform_glfw.h
+        src/bindings.cpp src/bindings.h
+        src/engine.cpp src/engine.h
         src/main.cpp
         src/module.h
         src/platform.h
-        src/scripting.h
-        src/scripting.cpp
-        src/utils.cpp
-        src/utils.h
+        src/scripting.cpp src/scripting.h
+        src/utils.cpp src/utils.h
         src/vec.h)
 
 add_executable(tea ${ENGINE_SOURCES})

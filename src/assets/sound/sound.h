@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "asset.h"
+#include "../asset.h"
 
 namespace Tea {
     /**
