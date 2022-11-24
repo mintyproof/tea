@@ -1,2 +1,2 @@
 #!/bin/bash
-find src/ -iname *.cpp -o -iname *.h | xargs clang-format -i
+find src/ -print0 -iname "*.cpp" -o -iname "*.h" | xargs clang-format -i

@@ -1,4 +1,14 @@
-.vscode/
-.idea/
+# windows explorer / macos finder
+Thumbs.db
+.DS_Store
+
+
+# clion / intellij
+.idea
+
+# visual studio code
+.vscode
+
+# build system
 build/
 cmake-build-*/

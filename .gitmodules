@@ -1,21 +1,3 @@
-[submodule "deps/physfs"]
-	path = deps/physfs
-	url = https://github.com/Didstopia/physfs
 [submodule "deps/wren"]
 	path = deps/wren
-	url = https://github.com/munificent/wren
-[submodule "deps/cmrc"]
-	path = deps/cmrc
-	url = https://github.com/vector-of-bool/cmrc
-[submodule "deps/stb"]
-	path = deps/stb
-	url = https://github.com/nothings/stb
-[submodule "deps/glfw"]
-	path = deps/glfw
-	url = https://github.com/glfw/glfw
-[submodule "deps/portaudio"]
-	path = deps/portaudio
-	url = https://git.assembla.com/portaudio.git
-[submodule "deps/fmt"]
-	path = deps/fmt
-	url = https://github.com/fmtlib/fmt
+	url = https://github.com/wren-lang/wren

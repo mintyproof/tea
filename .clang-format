@@ -12,6 +12,7 @@ ColumnLimit: 120
 FixNamespaceComments: false
 IncludeBlocks: Preserve
 IndentWidth: 4
-NamespaceIndentation: All
+NamespaceIndentation: Inner
 SpaceBeforeCtorInitializerColon: false
 SpaceBeforeInheritanceColon: false
+IndentCaseLabels: false
