@@ -4,15 +4,13 @@
 #include <string>
 #include <vector>
 
-#include "scripting/scripting.h"
 #include "utils/nocopy.h"
-#include "core/platform.h"
 
 namespace tea {
 
-class Graphics;
 class Platform;
 class Renderer;
+class Graphics;
 class Scripting;
 
 class Engine : public NoCopy {

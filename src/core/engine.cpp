@@ -3,11 +3,14 @@
 #include <sstream>
 #include <iomanip>
 
+#include "core/platform.h"
+#include "gfx/renderer.h"
+#include "gfx/graphics.h"
+#include "scripting/scripting.h"
+
 #include "core/platformcreator.h"
 #include "gfx/colour.h"
 #include "gfx/commandbuffer.h"
-#include "gfx/graphics.h"
-#include "gfx/renderer.h"
 
 namespace tea {
 
