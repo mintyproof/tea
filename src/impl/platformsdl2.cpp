@@ -123,7 +123,7 @@ RendererGL33 PlatformSDL2::make_renderer_gl33() {
         SDL_GL_SetSwapInterval(0);
     };
     config.func_vsync_enable = [&] {
-        SDL_GL_SetSwapInterval(0);
+        SDL_GL_SetSwapInterval(1);
     };
     config.func_swap_buffers = [&] {
         SDL_GL_SwapWindow(window);
