@@ -6,7 +6,10 @@
 namespace tea {
 
 class RendererGL33 : public Renderer {
+public:
+    RendererGL33();
 
+    void execute_command_buffer(const CommandBuffer& buffer) override;
 };
 
 }

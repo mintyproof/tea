@@ -4,6 +4,8 @@
 #include <SDL.h>
 #include "gfx/colour.h"
 #include "impl/platformsdl2.h"
+#include "impl/renderergl33.h"
+#include "gfx/commandbuffer.h"
 
 namespace tea {
 
@@ -32,6 +34,8 @@ int Engine::run() {
     printf("Renderer: %s\n", glGetString(GL_RENDERER));
     printf("Version:  %s\n", glGetString(GL_VERSION));
 
+    RendererGL33 renderer = RendererGL33();
+
     SDL_GL_SetSwapInterval(1);
 
     bool running = true;
@@ -45,9 +49,11 @@ int Engine::run() {
 
         int w, h;
         SDL_GL_GetDrawableSize(window, &w, &h);
-        glViewport(0, 0, w, h);
-        glClearColor(0.0, 0.0, 0.0, 0.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        CommandBuffer buffer;
+        buffer.cmd_set_viewport(0, 0, w, h, 0.0, 1.0);
+        buffer.cmd_clear_to_colour(ColourRGB::CORNFLOWERBLUE);
+        renderer.execute_command_buffer(buffer);
 
         SDL_GL_SwapWindow(window);
     }
