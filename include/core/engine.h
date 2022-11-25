@@ -24,9 +24,9 @@ private:
     void perform_draw(double delta_time);
 
     std::vector<std::string> args;
-    std::unique_ptr<Platform> platform;
+    std::shared_ptr<Platform> platform;
     std::shared_ptr<Renderer> renderer;
-    std::unique_ptr<Graphics> graphics;
+    std::shared_ptr<Graphics> graphics;
     std::unique_ptr<Scripting> scripting;
 };
 

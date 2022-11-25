@@ -19,8 +19,10 @@ Engine::Engine(std::vector<std::string> args) {
     auto platform_tuple = get_platform();
     this->platform = std::move(std::get<0>(platform_tuple));
     this->renderer = std::move(std::get<1>(platform_tuple));
-    this->graphics = std::make_unique<Graphics>(this->renderer);
+    this->graphics = std::make_shared<Graphics>(this->renderer);
     this->scripting = std::make_unique<Scripting>();
+
+    this->renderer->set_vsync_enabled(true); // enable vsync by default
 }
 
 Engine::~Engine() = default;
@@ -35,7 +37,9 @@ int Engine::run() {
         last_time = now_time;
 
         std::ostringstream oss;
-        oss << std::fixed << std::setprecision(1) << (1.0 / delta_time) << " FPS";
+        oss << "Tea Debug [" << platform->get_name() << "] ["
+            << renderer->get_name() << "] ("
+            << std::fixed << std::setprecision(1) << (1.0 / delta_time) << " FPS)";
         platform->window_set_title(oss.str());
 
         perform_update(delta_time);

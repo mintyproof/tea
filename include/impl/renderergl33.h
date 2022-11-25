@@ -18,13 +18,15 @@ struct RendererGL33Config {
 class RendererGL33 : public Renderer {
 public:
     explicit RendererGL33(RendererGL33Config config);
-    ~RendererGL33();
+    ~RendererGL33() override;
+
+    [[nodiscard]] const char* get_name() const override;
 
     void execute_command_buffer(const CommandBuffer& buffer) override;
 
     [[nodiscard]] int get_drawable_width() const override;
     [[nodiscard]] int get_drawable_height() const override;
-    void vsync_enabled(bool enabled) override;
+    void set_vsync_enabled(bool enabled) override;
     void swap_buffers() override;
 private:
     RendererGL33Config config;

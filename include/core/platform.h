@@ -1,6 +1,8 @@
 #ifndef TEA_CORE_PLATFORM_H
 #define TEA_CORE_PLATFORM_H
 
+#include <cstdint>
+#include <string>
 #include "utils/nocopy.h"
 
 namespace tea {
@@ -15,6 +17,9 @@ enum class WindowFlags {
 class Platform : public NoCopy {
 public:
     virtual ~Platform() = default;
+
+    // returns a name identifying the platform.
+    [[nodiscard]] virtual const char* get_name() const = 0;
 
     // returns the amount of time, in milliseconds, since the platform started.
     // not guaranteed to start at zero.

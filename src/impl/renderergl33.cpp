@@ -42,8 +42,12 @@ RendererGL33::RendererGL33(RendererGL33Config config) {
 
 RendererGL33::~RendererGL33() = default;
 
+const char* RendererGL33::get_name() const {
+    return "OpenGL 3.3";
+}
+
 void RendererGL33::execute_command_buffer(const CommandBuffer& buffer) {
-    // TODO: find another way of handling this- this is a hot path, recreating VisitOverload every call is non-ideal
+    // TODO: find another way of handling this- this is a hot path, recreating VisitOverload every call seems non-ideal
 
     auto visitor = VisitOverload {
         [](const CommandSetViewport& cmd) {
@@ -73,7 +77,7 @@ int RendererGL33::get_drawable_height() const {
     return config.func_get_drawable_height();
 }
 
-void RendererGL33::vsync_enabled(bool enabled) {
+void RendererGL33::set_vsync_enabled(bool enabled) {
     enabled ? config.func_vsync_enable()
             : config.func_vsync_disable();
 }

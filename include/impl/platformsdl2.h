@@ -1,8 +1,6 @@
 #ifndef TEA_IMPL_PLATFORMSDL2_H
 #define TEA_IMPL_PLATFORMSDL2_H
 
-#include <cstdint>
-#include <string>
 #include "core/platform.h"
 
 union SDL_Event;
@@ -15,7 +13,9 @@ class RendererGL33;
 class PlatformSDL2 : public Platform {
 public:
     PlatformSDL2();
-    ~PlatformSDL2();
+    ~PlatformSDL2() override;
+
+    [[nodiscard]] const char* get_name() const override;
 
     [[nodiscard]] uint64_t runtime_milliseconds() const override;
     [[nodiscard]] double runtime_seconds() const override;

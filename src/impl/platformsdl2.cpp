@@ -49,6 +49,10 @@ PlatformSDL2::~PlatformSDL2() {
     }
 }
 
+const char* PlatformSDL2::get_name() const {
+    return "SDL2";
+}
+
 uint64_t PlatformSDL2::runtime_milliseconds() const {
     return SDL_GetTicks64() - ticks_at_init;
 }

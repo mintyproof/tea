@@ -11,6 +11,9 @@ class Renderer : public NoCopy {
 public:
     virtual ~Renderer() = default;
 
+    // returns a name identifying the renderer.
+    [[nodiscard]] virtual const char* get_name() const = 0;
+
     virtual void execute_command_buffer(const CommandBuffer& buffer) = 0;
 
     // returns the width of the drawable portion of the window.
@@ -25,7 +28,7 @@ public:
     // determining the height of the window that can be drawn to.
     [[nodiscard]] virtual int get_drawable_height() const = 0;
 
-    virtual void vsync_enabled(bool enabled) = 0;
+    virtual void set_vsync_enabled(bool enabled) = 0;
     virtual void swap_buffers() = 0;
 };
 
