@@ -21,16 +21,11 @@ Engine::Engine(std::vector<std::string> args) {
     this->renderer = std::move(std::get<1>(platform_tuple));
     this->graphics = std::make_unique<Graphics>(this->renderer);
     this->scripting = std::make_unique<Scripting>();
-    std::unique_ptr<Graphics> graphics = std::make_unique<Graphics>(renderer);
 }
 
 Engine::~Engine() = default;
 
 int Engine::run() {
-    scripting->test();
-
-    renderer->vsync_enabled(true);
-
     double last_time = platform->runtime_seconds();
     while (!platform->should_quit()) {
         platform->poll_events();
