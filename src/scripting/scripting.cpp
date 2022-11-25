@@ -1,6 +1,7 @@
 #include "scripting/scripting.h"
 
 #include <cstdio>
+#include <string>
 #include <wren.hpp>
 
 void default_write_func(WrenVM* vm, const char* text) {
@@ -46,6 +47,16 @@ Scripting::~Scripting() {
 
 void Scripting::test() {
     WrenInterpretResult result = wrenInterpret(wren_vm, "tea", DEBUG_SCRIPT);
+
+    wrenEnsureSlots(wren_vm, 1);
+    wrenGetVariable(wren_vm, "tea", "say_hello_to", 0);
+    WrenHandle* our_func = wrenGetSlotHandle(wren_vm, 0);
+    WrenHandle* our_func_handle = wrenMakeCallHandle(wren_vm, "call(_)");
+
+    wrenEnsureSlots(wren_vm, 2);
+    wrenSetSlotHandle(wren_vm, 0, our_func);
+    wrenSetSlotString(wren_vm, 1, "c++");
+    WrenInterpretResult other_result = wrenCall(wren_vm, our_func_handle);
 
     switch (result) {
     case WREN_RESULT_COMPILE_ERROR:

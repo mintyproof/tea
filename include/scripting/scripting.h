@@ -1,6 +1,8 @@
 #ifndef TEA_SCRIPTING_H
 #define TEA_SCRIPTING_H
 
+#include <iosfwd>
+
 struct WrenVM;
 struct WrenHandle;
 

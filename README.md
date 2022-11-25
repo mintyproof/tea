@@ -7,4 +7,6 @@ if you're interested in the predecessor of this codebase from 2018 & 2019,
 please see the [2018] branch.
 
 [2018]: https://github.com/mintyproof/tea/tree/2018
+[cmake]: https://cmake.org
+[sdl2]: https://libsdl.org
 [wren]: https://wren.io

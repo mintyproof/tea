@@ -1,0 +1,2 @@
+in the future, this will host a default template "no game" screen to use when starting tea with no game provided,
+akin to how love2d handles this issue.
