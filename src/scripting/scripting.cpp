@@ -4,6 +4,8 @@
 #include <string>
 #include <wren.hpp>
 
+#include "scripting/slot.h"
+
 void default_write_func(WrenVM* vm, const char* text) {
     printf("%s", text);
 }
@@ -23,18 +25,52 @@ void default_error_func(WrenVM* vm, WrenErrorType error_type, const char* module
 }
 
 const char* DEBUG_SCRIPT = R"WREN(
-var say_hello_to = Fn.new { |name|
-    System.print("hello %(name)!")
+class Tea {
+    foreign static test(string)
 }
 
-say_hello_to.call("tea")
+class Main {
+    construct on_start() {
+        Tea.test("c++")
+    }
+
+    on_quit() {
+    }
+
+    on_update(dt) {
+        System.print(dt)
+    }
+
+    on_draw(dt) {
+    }
+}
+
+var mainClassInstance = Main.on_start()
 )WREN";
+
+void test_func(WrenVM* wren_vm) {
+    const char* arg = wrenGetSlotString(wren_vm, 1);
+    printf("hello %s!\n", arg);
+}
+
+WrenForeignMethodFn tea_wren_bind_foreign_method(WrenVM* wren_vm,
+                                                 const char* module,
+                                                 const char* class_name,
+                                                 bool is_static,
+                                                 const char* signature) {
+    return test_func;
+}
+
+void tea_wren_bind_foreign_class() {
+}
 
 namespace tea {
 
 Scripting::Scripting() {
     WrenConfiguration config;
     wrenInitConfiguration(&config);
+    config.bindForeignMethodFn = tea_wren_bind_foreign_method;
+    config.bindForeignClassFn = NULL;
     config.errorFn = &default_error_func;
     config.writeFn = &default_write_func;
 
@@ -45,17 +81,23 @@ Scripting::~Scripting() {
     wrenFreeVM(wren_vm);
 }
 
+Slot Scripting::slot(int slot_index) {
+    wrenEnsureSlots(wren_vm, slot_index + 1);
+    return { wren_vm, slot_index };
+}
+
 void Scripting::test() {
+    // "static tea/Tea::test(_)"
     WrenInterpretResult result = wrenInterpret(wren_vm, "tea", DEBUG_SCRIPT);
 
     wrenEnsureSlots(wren_vm, 1);
-    wrenGetVariable(wren_vm, "tea", "say_hello_to", 0);
+    wrenGetVariable(wren_vm, "tea", "mainClassInstance", 0);
     WrenHandle* our_func = wrenGetSlotHandle(wren_vm, 0);
-    WrenHandle* our_func_handle = wrenMakeCallHandle(wren_vm, "call(_)");
+    WrenHandle* our_func_handle = wrenMakeCallHandle(wren_vm, "on_update(_)");
 
     wrenEnsureSlots(wren_vm, 2);
     wrenSetSlotHandle(wren_vm, 0, our_func);
-    wrenSetSlotString(wren_vm, 1, "c++");
+    wrenSetSlotDouble(wren_vm, 1, 0.0);
     WrenInterpretResult other_result = wrenCall(wren_vm, our_func_handle);
 
     switch (result) {

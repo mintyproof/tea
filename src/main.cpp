@@ -1,5 +1,6 @@
 #include "core/engine.h"
 
+/*
 #include <iostream>
 #include <cmrc/cmrc.hpp>
 
@@ -21,10 +22,9 @@ void res_test() {
     auto res_fs = cmrc::tea::get_filesystem();
     res_fs_iterate(res_fs, 0, "");
 }
+*/
 
 int main(int argc, char* argv[]) {
-    res_test();
-
     // collate program arguments into a vector of strings, excluding the first argument
     // (since the first argument is the launch path, which we don't want to expose to projects)
     std::vector<std::string> args(argv + 1, argv + argc);

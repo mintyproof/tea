@@ -1,17 +1,19 @@
-#ifndef TEA_SCRIPTING_H
-#define TEA_SCRIPTING_H
-
-#include <iosfwd>
+#ifndef TEA_SCRIPTING_SCRIPTING_H
+#define TEA_SCRIPTING_SCRIPTING_H
 
 struct WrenVM;
 struct WrenHandle;
 
 namespace tea {
 
+class Slot;
+
 class Scripting {
 public:
     Scripting();
     ~Scripting();
+
+    Slot slot(int slot_index);
 
     void test();
 private:
@@ -20,4 +22,4 @@ private:
 
 }
 
-#endif // TEA_SCRIPTING_H
+#endif // TEA_SCRIPTING_SCRIPTING_H

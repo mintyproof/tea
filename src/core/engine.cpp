@@ -39,6 +39,8 @@ Engine::Engine(std::vector<std::string> args) {
 Engine::~Engine() = default;
 
 int Engine::run() {
+    scripting->test();
+
     scripting_events->on_start();
 
     double last_time = platform->runtime_seconds();

@@ -1,0 +1,8 @@
+#ifndef TEA_SCRIPTING_BINDINGS_H
+#define TEA_SCRIPTING_BINDINGS_H
+
+namespace tea {
+
+}
+
+#endif // TEA_SCRIPTING_BINDINGS_H
