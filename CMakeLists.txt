@@ -54,11 +54,18 @@ target_compile_definitions(wren PRIVATE _CRT_SECURE_NO_WARNINGS) # to prevent fl
 
 find_package(SDL2 REQUIRED)
 
+include(deps/cmrc/CMakeRC.cmake)
+cmrc_add_resource_library(tea-res ALIAS tea::res NAMESPACE tea WHENCE misc/res/
+    misc/res/script/prelude.wren
+    misc/res/shader/opengl/default_fragment.glsl
+    misc/res/shader/opengl/default_vertex.glsl)
+
 set(TEA_INCLUDE_DIRS
     include
     ${SDL2_INCLUDE_DIR})
 
 set(TEA_LINK_LIBRARIES
+    tea::res
     wren
     glad
     ${SDL2_LIBRARY})
