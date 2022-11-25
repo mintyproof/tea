@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 
-#include <string>
 #include <utility>
 #include <variant>
 #include "gfx/commandbuffer.h"
@@ -40,6 +39,8 @@ RendererGL33::RendererGL33(RendererGL33Config config) {
     glad_set_post_callback(tea_gl_post_call_callback);
 #endif
 }
+
+RendererGL33::~RendererGL33() = default;
 
 void RendererGL33::execute_command_buffer(const CommandBuffer& buffer) {
     // TODO: find another way of handling this- this is a hot path, recreating VisitOverload every call is non-ideal

@@ -29,7 +29,7 @@ public:
     void window_set_size(int width, int height) override;
     void window_set_title(const std::string& title) override;
 
-    RendererGL33 make_renderer_gl33();
+    std::shared_ptr<RendererGL33> make_renderer_gl33();
 private:
     SDL_Window* window;
     std::string window_title;

@@ -1,3 +1,4 @@
 target_sources(tea PUBLIC
     colour.cpp
-    commandbuffer.cpp)
+    commandbuffer.cpp
+    graphics.cpp)

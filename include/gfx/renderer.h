@@ -9,6 +9,8 @@ class CommandBuffer;
 
 class Renderer : public NoCopy {
 public:
+    virtual ~Renderer() = default;
+
     virtual void execute_command_buffer(const CommandBuffer& buffer) = 0;
 
     // returns the width of the drawable portion of the window.

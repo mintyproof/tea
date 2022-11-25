@@ -74,7 +74,7 @@ target_compile_features(tea PUBLIC cxx_std_17)
 
 if (TEA_DEBUG)
     target_compile_definitions(tea PUBLIC TEA_DEBUG)
-endif()
+endif ()
 
 if (MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /wd4100 /fp:fast")

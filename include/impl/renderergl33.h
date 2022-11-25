@@ -18,6 +18,7 @@ struct RendererGL33Config {
 class RendererGL33 : public Renderer {
 public:
     explicit RendererGL33(RendererGL33Config config);
+    ~RendererGL33();
 
     void execute_command_buffer(const CommandBuffer& buffer) override;
 

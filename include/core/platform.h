@@ -14,6 +14,8 @@ enum class WindowFlags {
 
 class Platform : public NoCopy {
 public:
+    virtual ~Platform() = default;
+
     // returns the amount of time, in milliseconds, since the platform started.
     // not guaranteed to start at zero.
     [[nodiscard]] virtual uint64_t runtime_milliseconds() const = 0;

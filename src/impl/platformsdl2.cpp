@@ -97,7 +97,7 @@ void PlatformSDL2::window_set_title(const std::string& title) {
     SDL_SetWindowTitle(window, window_title.c_str());
 }
 
-RendererGL33 PlatformSDL2::make_renderer_gl33() {
+std::shared_ptr<RendererGL33> PlatformSDL2::make_renderer_gl33() {
 #ifdef TEA_DEBUG
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_RELEASE_BEHAVIOR, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
@@ -129,7 +129,7 @@ RendererGL33 PlatformSDL2::make_renderer_gl33() {
         SDL_GL_SwapWindow(window);
     };
 
-    return RendererGL33(config);
+    return std::make_shared<RendererGL33>(config);
 }
 
 }

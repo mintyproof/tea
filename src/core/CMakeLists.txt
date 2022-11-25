@@ -1,2 +1,3 @@
 target_sources(tea PUBLIC
-    engine.cpp)
+    engine.cpp
+    platformcreator.cpp)
