@@ -1,2 +1,3 @@
 target_sources(tea PUBLIC
-    scripting.cpp)
+    scripting.cpp
+    scriptingevents.cpp)

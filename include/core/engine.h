@@ -8,10 +8,12 @@
 
 namespace tea {
 
+class Logger;
 class Platform;
 class Renderer;
 class Graphics;
 class Scripting;
+class ScriptingEvents;
 
 class Engine : public NoCopy {
 public:
@@ -20,14 +22,13 @@ public:
 
     int run();
 private:
-    void perform_update(double delta_time);
-    void perform_draw(double delta_time);
-
     std::vector<std::string> args;
+    std::shared_ptr<Logger> logger;
     std::shared_ptr<Platform> platform;
     std::shared_ptr<Renderer> renderer;
     std::shared_ptr<Graphics> graphics;
-    std::unique_ptr<Scripting> scripting;
+    std::shared_ptr<Scripting> scripting;
+    std::unique_ptr<ScriptingEvents> scripting_events;
 };
 
 }
