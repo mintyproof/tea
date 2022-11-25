@@ -22,29 +22,21 @@ public:
     // not guaranteed to start at zero.
     [[nodiscard]] virtual double runtime_seconds() const = 0;
 
+    virtual void poll_events() = 0;
+
+    // returns whether the platform wants to shut down the engine and exit.
+    // this becomes true in various circumstances- most commonly, the user clicking the close button on Tea's window.
+    [[nodiscard]] virtual bool should_quit() const = 0;
+
     // returns the width of the window on-screen.
     // for high-DPI displays- for example, most macOS computers- this may not reflect the actual size of the drawable
-    // portion of the window; for determining how wide the drawable area is, see window_get_drawable_width()
+    // portion of the window; for determining how wide the drawable area is, see Renderer's get_drawable_width()
     [[nodiscard]] virtual int window_get_width() const = 0;
 
     // returns the height of the window on-screen.
     // for high-DPI displays- for example, most macOS computers- this may not reflect the actual size of the drawable
-    // portion of the window; for determining how tall the drawable area is, see window_get_drawable_height()
+    // portion of the window; for determining how tall the drawable area is, see Renderer's get_drawable_height()
     [[nodiscard]] virtual int window_get_height() const = 0;
-
-    // TODO: drawable width and drawable height being in Platform and not Graphics doesn't make much sense, actually
-
-    // returns the width of the drawable portion of the window.
-    // usually, this will not be distinct from window_get_width(), but on high-DPI displays, the size of the window
-    // in screen coordinates may not match with the size of the window in pixels, making this function relevant for
-    // determining the width of the window that can be drawn to.
-    [[nodiscard]] virtual int window_get_drawable_width() const = 0;
-
-    // returns the height of the drawable portion of the window.
-    // usually, this will not be distinct from window_get_height(), but on high-DPI displays, the size of the window
-    // in screen coordinates may not match with the size of the window in pixels, making this function relevant for
-    // determining the height of the window that can be drawn to.
-    [[nodiscard]] virtual int window_get_drawable_height() const = 0;
 
     // returns the title of the window.
     [[nodiscard]] virtual std::string_view window_get_title() const = 0;
