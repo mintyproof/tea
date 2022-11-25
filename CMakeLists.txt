@@ -93,8 +93,8 @@ else ()
         -ffast-math -fno-finite-math-only -fno-associative-math")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} \
         -g3 \
-        -Wno-error=unused-parameter -Wno-error=unused-variable") # to make development easier, where some variables may
-                                                                 # momentarily be unused prior to implementation
+        -Wno-error=unused-parameter -Wno-error=unused-variable -Wno-error=unused-private-field")
+        # ^ to make development easier, where some variables may momentarily be unused prior to implementation
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

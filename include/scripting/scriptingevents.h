@@ -3,21 +3,25 @@
 
 #include <memory>
 
-namespace tea {
+struct WrenVM;
+struct WrenHandle;
 
-class Scripting;
+namespace tea {
 
 class ScriptingEvents {
 public:
-    explicit ScriptingEvents(std::shared_ptr<Scripting> scripting);
+    explicit ScriptingEvents(WrenVM* wren_vm);
 
-    void on_start();
+    // on_start is absent here- on_start is the constructor of the main class, so it is automatically called.
     void on_quit();
-
     void on_update(double delta_time);
     void on_draw(double delta_time);
 private:
-    std::shared_ptr<Scripting> scripting;
+    WrenVM* wren_vm;
+    WrenHandle* main_instance_handle;
+    WrenHandle* on_quit_handle;
+    WrenHandle* on_update_handle;
+    WrenHandle* on_draw_handle;
 };
 
 }

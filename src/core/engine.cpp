@@ -23,8 +23,8 @@ Engine::Engine(std::vector<std::string> args) {
     this->platform = std::move(std::get<0>(platform_tuple));
     this->renderer = std::move(std::get<1>(platform_tuple));
     this->graphics = std::make_shared<Graphics>(this->renderer);
-    this->scripting = std::make_shared<Scripting>();
-    this->scripting_events = std::make_unique<ScriptingEvents>(this->scripting);
+    this->scripting = std::make_shared<Scripting>(this);
+    //this->scripting_events = this->scripting->get_scripting_events();
 
 #ifndef TEA_DEBUG
     // if we're not in debug mode, let's not log from C++- only Wren code should log
@@ -39,10 +39,6 @@ Engine::Engine(std::vector<std::string> args) {
 Engine::~Engine() = default;
 
 int Engine::run() {
-    scripting->test();
-
-    scripting_events->on_start();
-
     double last_time = platform->runtime_seconds();
     while (!platform->should_quit()) {
         platform->poll_events();
@@ -57,14 +53,14 @@ int Engine::run() {
             << std::fixed << std::setprecision(1) << (1.0 / delta_time) << " FPS)";
         platform->window_set_title(oss.str());
 
-        scripting_events->on_update(delta_time);
+        //scripting_events->on_update(delta_time);
 
         graphics->clear_to_colour(ColourRGB::CORNFLOWERBLUE);
-        scripting_events->on_draw(delta_time);
+        //scripting_events->on_draw(delta_time);
         renderer->swap_buffers();
     }
 
-    scripting_events->on_quit();
+    //scripting_events->on_quit();
 
     LOG(this->logger, Info, "quitting..");
 

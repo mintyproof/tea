@@ -1,9 +1,6 @@
 class Prelude {
     static run(mainClass) {
-        __mainClassInstance = mainClass.init()
-    }
-
-    static onUpdate(deltaTime) {
-        __mainClassInstance.onUpdate(deltaTime)
+        __mainClassInstance = mainClass.on_start()
+        return __mainClassInstance
     }
 }
