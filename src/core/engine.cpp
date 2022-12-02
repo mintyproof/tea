@@ -10,8 +10,9 @@
 #include "scripting/bindings.h"
 #include "scripting/scripting.h"
 #include "core/platformcreator.h"
-#include "gfx/colour.h"
 #include "gfx/commandbuffer.h"
+
+#include <wren.hpp>
 
 namespace tea {
 
@@ -21,8 +22,16 @@ Engine::Engine(std::vector<std::string> args) {
     auto platform_tuple = create_platform();
     this->platform = std::move(std::get<0>(platform_tuple));
     this->renderer = std::move(std::get<1>(platform_tuple));
-    this->graphics = std::make_shared<Graphics>(this->renderer);
-    this->scripting = std::make_shared<Scripting>(this);
+    this->graphics = std::make_unique<Graphics>(this->renderer);
+    this->scripting = std::make_unique<Scripting>(*this);
+
+    scripting->bind("static tea::Tea::clear_to_colour(_,_,_)", [](WrenVM* vm, Context ctx) {
+        double r = wrenGetSlotDouble(vm, 1);
+        double g = wrenGetSlotDouble(vm, 2);
+        double b = wrenGetSlotDouble(vm, 3);
+
+        ctx.graphics.clear_to_colour(tea::ColourRGB(r, g, b));
+    });
 
     this->renderer->set_vsync_enabled(true); // enable vsync by default
 
@@ -36,6 +45,8 @@ Engine::Engine(std::vector<std::string> args) {
 Engine::~Engine() = default;
 
 int Engine::run() {
+    scripting->init();
+
     double last_time = platform->runtime_seconds();
     while (!platform->should_quit()) {
         platform->poll_events();
@@ -51,7 +62,8 @@ int Engine::run() {
         platform->window_set_title(oss.str());
 
         scripting->on_update(delta_time);
-        
+
+        graphics->clear_to_colour(ColourRGB::CORNFLOWERBLUE);
         scripting->on_draw(delta_time);
         renderer->swap_buffers();
     }
@@ -85,6 +97,16 @@ Graphics& Engine::get_graphics() {
 
 Scripting& Engine::get_scripting() {
     return *scripting;
+}
+
+Context Engine::get_context() {
+    return {
+        get_assets(),
+        get_logger(),
+        get_platform(),
+        get_graphics(),
+        get_scripting()
+    };
 }
 
 }
