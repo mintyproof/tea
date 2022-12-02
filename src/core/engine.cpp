@@ -23,7 +23,6 @@ Engine::Engine(std::vector<std::string> args) {
     this->renderer = std::move(std::get<1>(platform_tuple));
     this->graphics = std::make_shared<Graphics>(this->renderer);
     this->scripting = std::make_shared<Scripting>(this);
-    generate_bindings(*this->scripting);
 
     this->renderer->set_vsync_enabled(true); // enable vsync by default
 
@@ -52,8 +51,7 @@ int Engine::run() {
         platform->window_set_title(oss.str());
 
         scripting->on_update(delta_time);
-
-        graphics->clear_to_colour(ColourRGB::CORNFLOWERBLUE);
+        
         scripting->on_draw(delta_time);
         renderer->swap_buffers();
     }
@@ -74,30 +72,19 @@ Logger& Engine::get_logger() {
 }
 
 Platform& Engine::get_platform() {
-    return *this->platform;
+    return *platform;
 }
 
 Renderer& Engine::get_renderer() {
-    return *this->renderer;
+    return *renderer;
 }
 
 Graphics& Engine::get_graphics() {
-    return *this->graphics;
+    return *graphics;
 }
 
 Scripting& Engine::get_scripting() {
-    return *this->scripting;
-}
-
-Context Engine::get_context() {
-    return {
-        *this->assets,
-        *this->logger,
-        *this->platform,
-        *this->renderer,
-        *this->graphics,
-        *this->scripting
-    };
+    return *scripting;
 }
 
 }

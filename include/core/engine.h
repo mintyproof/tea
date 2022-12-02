@@ -15,15 +15,6 @@ class Renderer;
 class Graphics;
 class Scripting;
 
-struct Context {
-    Assets& assets;
-    Logger& logger;
-    Platform& platform;
-    Renderer& renderer;
-    Graphics& graphics;
-    Scripting& scripting;
-};
-
 class Engine : public NoCopy {
 public:
     explicit Engine(std::vector<std::string> args);
@@ -37,7 +28,6 @@ public:
     Renderer& get_renderer();
     Graphics& get_graphics();
     Scripting& get_scripting();
-    Context get_context();
 private:
     std::vector<std::string> args;
     std::shared_ptr<Assets> assets;
