@@ -5,35 +5,30 @@
 #include <string>
 #include <unordered_map>
 
-#include <wren.hpp>
+struct WrenVM;
+struct WrenHandle;
 
 namespace tea {
 
 class Engine;
-class ScriptingEvents;
-class Slot;
 
 class Scripting {
 public:
     explicit Scripting(Engine* engine);
     ~Scripting();
 
-    Slot slot(int slot_index);
-
-    [[nodiscard]] std::unique_ptr<ScriptingEvents> get_scripting_events();
+    // on_start is absent here- on_start is the constructor of the main class, so it is automatically called.
+    void on_quit();
+    void on_update(double delta_time);
+    void on_draw(double delta_time);
 private:
-    static WrenBindForeignMethodFn wren_config_bindforeignmethodfn(WrenVM* wren_vm,
-                                                                   const char* module,
-                                                                   const char* class_name,
-                                                                   bool is_static,
-                                                                   const char* signature);
-    static void wren_config_errorfn(WrenVM* vm, WrenErrorType error_type, const char* module, const int line, const char* msg);
-    static void wren_config_writefn(WrenVM* wren_vm, const char* text);
-
     Engine* engine;
     WrenVM* wren_vm;
-
     std::unordered_map<std::string, void (*)(WrenVM*)> method_bindings;
+    WrenHandle* main_instance_handle;
+    WrenHandle* on_quit_handle;
+    WrenHandle* on_update_handle;
+    WrenHandle* on_draw_handle;
 };
 
 }

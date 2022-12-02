@@ -11,7 +11,7 @@ namespace tea {
 class Platform;
 class Renderer;
 
-std::tuple<std::shared_ptr<Platform>, std::shared_ptr<Renderer>> get_platform();
+std::tuple<std::shared_ptr<Platform>, std::shared_ptr<Renderer>> create_platform();
 
 }
 

@@ -7,9 +7,8 @@
 #include "core/platform.h"
 #include "gfx/renderer.h"
 #include "gfx/graphics.h"
+#include "scripting/bindings.h"
 #include "scripting/scripting.h"
-#include "scripting/scriptingevents.h"
-
 #include "core/platformcreator.h"
 #include "gfx/colour.h"
 #include "gfx/commandbuffer.h"
@@ -19,20 +18,19 @@ namespace tea {
 Engine::Engine(std::vector<std::string> args) {
     this->args = std::move(args);
     this->logger = std::make_shared<Logger>();
-    auto platform_tuple = get_platform();
+    auto platform_tuple = create_platform();
     this->platform = std::move(std::get<0>(platform_tuple));
     this->renderer = std::move(std::get<1>(platform_tuple));
     this->graphics = std::make_shared<Graphics>(this->renderer);
     this->scripting = std::make_shared<Scripting>(this);
-    //this->scripting_events = this->scripting->get_scripting_events();
-
-#ifndef TEA_DEBUG
-    // if we're not in debug mode, let's not log from C++- only Wren code should log
-    this->logger->set_cpp_logging_allowed(false);
-#endif
+    generate_bindings(*this->scripting);
 
     this->renderer->set_vsync_enabled(true); // enable vsync by default
 
+#ifndef TEA_DEBUG
+    // if we're not in debug mode, let's not log from C++; only Wren code should log
+    this->logger->set_cpp_logging_allowed(false);
+#endif
     LOG(this->logger, Info, "starting..");
 }
 
@@ -53,18 +51,53 @@ int Engine::run() {
             << std::fixed << std::setprecision(1) << (1.0 / delta_time) << " FPS)";
         platform->window_set_title(oss.str());
 
-        //scripting_events->on_update(delta_time);
+        scripting->on_update(delta_time);
 
         graphics->clear_to_colour(ColourRGB::CORNFLOWERBLUE);
-        //scripting_events->on_draw(delta_time);
+        scripting->on_draw(delta_time);
         renderer->swap_buffers();
     }
 
-    //scripting_events->on_quit();
+    scripting->on_quit();
 
     LOG(this->logger, Info, "quitting..");
 
     return 0;
+}
+
+Assets& Engine::get_assets() {
+    return *this->assets;
+}
+
+Logger& Engine::get_logger() {
+    return *this->logger;
+}
+
+Platform& Engine::get_platform() {
+    return *this->platform;
+}
+
+Renderer& Engine::get_renderer() {
+    return *this->renderer;
+}
+
+Graphics& Engine::get_graphics() {
+    return *this->graphics;
+}
+
+Scripting& Engine::get_scripting() {
+    return *this->scripting;
+}
+
+Context Engine::get_context() {
+    return {
+        *this->assets,
+        *this->logger,
+        *this->platform,
+        *this->renderer,
+        *this->graphics,
+        *this->scripting
+    };
 }
 
 }

@@ -7,7 +7,7 @@
 
 namespace tea {
 
-std::tuple<std::shared_ptr<Platform>, std::shared_ptr<Renderer>> get_platform() {
+std::tuple<std::shared_ptr<Platform>, std::shared_ptr<Renderer>> create_platform() {
     std::shared_ptr<PlatformSDL2> platform_sdl2 = std::make_shared<PlatformSDL2>();
     std::shared_ptr<Renderer> renderer = platform_sdl2->make_renderer_gl33();
 
