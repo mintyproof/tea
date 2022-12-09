@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        build_mode: ["", "--release"]
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Tea
+        shell: bash
+        run: |
+          set -xeuo pipefail
+          rustc --version
+          cargo --version
+          cargo build ${{matrix.build_mode}}
