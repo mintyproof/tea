@@ -1,5 +1,5 @@
-use super::Platform;
 use crate::gfx::Renderer;
+use crate::platform::Platform;
 
 type PlatformRef<'a> = &'a mut (dyn Platform + 'a);
 type RendererRef<'a> = &'a mut (dyn Renderer + 'a);

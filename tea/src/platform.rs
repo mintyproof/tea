@@ -36,4 +36,12 @@ pub trait Platform {
 
     /// alters the title of the window.
     fn window_set_title(&mut self, title: &str);
+
+    // TODO: temporary, this should be a feature of Renderer
+    fn swap_buffers(&mut self);
+}
+
+pub trait PlatformSupportingOpenGL {
+    /// retreives an OpenGL procedure by name.
+    fn gl_get_proc_address(&self, proc: &str) -> *const core::ffi::c_void;
 }

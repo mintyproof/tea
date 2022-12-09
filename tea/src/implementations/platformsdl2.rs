@@ -1,4 +1,4 @@
-use crate::core::Platform;
+use crate::platform::{Platform, PlatformSupportingOpenGL};
 
 use sdl2::{
     event::Event, keyboard::Keycode, video::Window, EventPump, Sdl, TimerSubsystem, VideoSubsystem,
@@ -8,7 +8,7 @@ pub struct PlatformSDL2 {
     should_quit: bool,
     sdl: Sdl,
     timer: TimerSubsystem,
-    video: VideoSubsystem,
+    pub video: VideoSubsystem, // TODO: only temporarily public
     event_pump: EventPump,
     ticks_at_init: u64,
     performance_counter_at_init: u64,
@@ -100,5 +100,15 @@ impl Platform for PlatformSDL2 {
 
     fn window_set_title(&mut self, title: &str) {
         self.window.set_title(title).unwrap();
+    }
+
+    fn swap_buffers(&mut self) {
+        self.window.gl_swap_window();
+    }
+}
+
+impl PlatformSupportingOpenGL for PlatformSDL2 {
+    fn gl_get_proc_address(&self, proc: &str) -> *const core::ffi::c_void {
+        self.video.gl_get_proc_address(proc) as *const core::ffi::c_void
     }
 }
