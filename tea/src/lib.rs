@@ -14,9 +14,12 @@ pub struct Config {
 }
 
 pub fn run(_config: Config) -> Result<(), Box<dyn Error>> {
-    let mut engine = core::Engine::new(Box::new(PlatformSDL2 {}), Box::new(RendererGL33 {}));
-    println!("{}", engine.platform().get_name());
-    println!("{}", engine.renderer().get_name());
+    let platform = PlatformSDL2::new();
+    let renderer = RendererGL33 { };
+    let mut engine = core::Engine::new(Box::new(platform), Box::new(renderer));
+    while !engine.platform().should_quit() {
+        engine.platform_mut().poll_events();
+    }
 
     Ok(())
 }
