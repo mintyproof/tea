@@ -1,6 +1,3 @@
-[submodule "deps/wren"]
-	path = deps/wren
+[submodule "wren-bindgen/wren-c"]
+	path = wren-bindgen/wren-c
 	url = https://github.com/wren-lang/wren
-[submodule "deps/cmrc"]
-	path = deps/cmrc
-	url = https://github.com/vector-of-bool/cmrc

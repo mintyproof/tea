@@ -1,5 +1,0 @@
-add_subdirectory(assets)
-add_subdirectory(core)
-add_subdirectory(gfx)
-add_subdirectory(impl)
-add_subdirectory(scripting)

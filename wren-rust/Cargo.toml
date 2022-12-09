@@ -1,0 +1,8 @@
+[package]
+name = "wren-rust"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/mintyproof/tea/"
+
+[dependencies]
+wren-bindgen = { path = "../wren-bindgen" }

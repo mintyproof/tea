@@ -1,0 +1,9 @@
+[package]
+name = "tea"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/mintyproof/tea/"
+
+[dependencies]
+sdl2 = { version = "0.35", features = ["bundled"] }
+wren-rust = { path = "../wren-rust" }

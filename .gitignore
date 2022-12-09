@@ -2,13 +2,11 @@
 Thumbs.db
 .DS_Store
 
-
 # clion / intellij
 .idea
 
 # visual studio code
 .vscode
 
-# build system
-build/
-cmake-build-*/
+# rust
+target/

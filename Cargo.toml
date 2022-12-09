@@ -1,0 +1,8 @@
+[workspace]
+
+members = [
+    "gl",
+    "tea",
+    "wren-bindgen",
+    "wren-rust"
+]

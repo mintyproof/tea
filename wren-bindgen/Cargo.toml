@@ -1,0 +1,9 @@
+[package]
+name = "wren-bindgen"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/mintyproof/tea/"
+
+[build-dependencies]
+bindgen = "0.63"
+cc = { version = "1", features = ["parallel"] }
