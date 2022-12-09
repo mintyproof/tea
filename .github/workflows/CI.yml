@@ -19,6 +19,7 @@ jobs:
         shell: bash
         run: |
           set -xeuo pipefail
+          git submodule update --init --recursive
           rustc --version
           cargo --version
           cargo build ${{matrix.build_mode}}
