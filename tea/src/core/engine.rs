@@ -6,15 +6,12 @@ type RendererRef<'a> = &'a mut (dyn Renderer + 'a);
 
 pub struct Engine {
     platform: Box<dyn Platform>,
-    renderer: Box<dyn Renderer>
+    renderer: Box<dyn Renderer>,
 }
 
 impl Engine {
     pub fn new(platform: Box<dyn Platform>, renderer: Box<dyn Renderer>) -> Self {
-        Self {
-            platform,
-            renderer
-        }
+        Self { platform, renderer }
     }
 
     pub fn platform(&self) -> &dyn Platform {

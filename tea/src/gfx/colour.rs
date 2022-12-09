@@ -2,15 +2,12 @@ pub struct ColourRGB {
     r: f64,
     g: f64,
     b: f64,
-    a: f64
+    a: f64,
 }
 
 impl ColourRGB {
     pub fn from_rgb(r: f64, g: f64, b: f64) -> Self {
-        Self {
-            r, g, b,
-            a: 1.0
-        }
+        Self { r, g, b, a: 1.0 }
     }
 
     pub fn from_rgba(r: f64, g: f64, b: f64, a: f64) -> Self {
@@ -22,7 +19,12 @@ impl ColourRGB {
     }
 
     pub fn from_rgba_bytes(r: u8, g: u8, b: u8, a: u8) -> Self {
-        Self::from_rgba(r as f64 / 255.0, g as f64 / 255.0, b as f64 / 255.0, a as f64 / 255.0)
+        Self::from_rgba(
+            r as f64 / 255.0,
+            g as f64 / 255.0,
+            b as f64 / 255.0,
+            a as f64 / 255.0,
+        )
     }
 
     pub fn r(&self) -> f64 {

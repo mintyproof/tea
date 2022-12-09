@@ -1,4 +1,4 @@
-use gl_generator::{Api, Fallbacks, StructGenerator, Profile, Registry};
+use gl_generator::{Api, Fallbacks, Profile, Registry, StructGenerator};
 use std::{env, fs::File, path::Path};
 
 fn main() {

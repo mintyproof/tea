@@ -12,18 +12,18 @@ pub trait Platform {
     fn poll_events(&mut self);
 
     /// returns whether the platform wants to shut down the engine and exit.  
-    /// 
+    ///
     /// this becomes true in various circumstances- most commonly, the user clicking the close button on Tea's window.
     fn should_quit(&self) -> bool;
 
     /// returns the width of the window on-screen
-    /// 
+    ///
     /// for high-DPI displays- for example, most macOS computers- this may not reflect the actual size of the drawable
     /// portion of the window; functions for determining this will be made available.. eventually.
     fn window_get_width(&self) -> u32;
 
     /// returns the height of the window on-screen.
-    /// 
+    ///
     /// for high-DPI displays- for example, most macOS computers- this may not reflect the actual size of the drawable
     /// portion of the window; functions for determining this will be made available.. eventually.
     fn window_get_height(&self) -> u32;

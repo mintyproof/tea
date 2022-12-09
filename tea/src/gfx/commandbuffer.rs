@@ -7,15 +7,11 @@ pub enum Command {
         w: f64,
         h: f64,
         depth_near: f64,
-        depth_far: f64
+        depth_far: f64,
     },
-    ClearToColour(ColourRGB)
+    ClearToColour(ColourRGB),
 }
 
-pub struct CommandBuffer {
+pub struct CommandBuffer {}
 
-}
-
-impl CommandBuffer {
-
-}
+impl CommandBuffer {}

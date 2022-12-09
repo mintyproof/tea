@@ -1,7 +1,11 @@
 use crate::core::Platform;
 
-pub struct PlatformSDL2 {
+pub struct PlatformSDL2 {}
 
+impl PlatformSDL2 {
+    pub fn new() -> Self {
+        Self {}
+    }
 }
 
 impl Platform for PlatformSDL2 {
@@ -17,9 +21,7 @@ impl Platform for PlatformSDL2 {
         0.0
     }
 
-    fn poll_events(&mut self) {
-
-    }
+    fn poll_events(&mut self) {}
 
     fn should_quit(&self) -> bool {
         false
@@ -37,11 +39,7 @@ impl Platform for PlatformSDL2 {
         "".to_owned()
     }
 
-    fn window_set_size(&mut self, _: u32, _: u32) {
+    fn window_set_size(&mut self, _: u32, _: u32) {}
 
-    }
-
-    fn window_set_title(&mut self, _: &str) {
-
-    }
+    fn window_set_title(&mut self, _: &str) {}
 }

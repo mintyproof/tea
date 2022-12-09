@@ -5,7 +5,7 @@ use std::env;
 
 fn main() {
     let config = tea::Config {
-        args: env::args().collect()
+        args: env::args().collect(),
     };
 
     if let Err(e) = tea::run(config) {

@@ -19,8 +19,13 @@ fn main() {
 
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
-        .clang_args(["-Iwren-c/src/include", "-Iwren-c/src/optional", "-Iwren-c/src/vm",
-                     "-Wno-unused-parameter", "-Wno-unused-variable"])
+        .clang_args([
+            "-Iwren-c/src/include",
+            "-Iwren-c/src/optional",
+            "-Iwren-c/src/vm",
+            "-Wno-unused-parameter",
+            "-Wno-unused-variable",
+        ])
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .generate()
         .expect("unable to generate bindings");

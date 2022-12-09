@@ -6,15 +6,15 @@ pub mod core;
 pub mod gfx;
 pub mod implementations;
 
-use std::error::Error;
 use implementations::{PlatformSDL2, RendererGL33};
+use std::error::Error;
 
 pub struct Config {
-    pub args: Vec<String>
+    pub args: Vec<String>,
 }
 
 pub fn run(_config: Config) -> Result<(), Box<dyn Error>> {
-    let mut engine = core::Engine::new(Box::new(PlatformSDL2 { }), Box::new(RendererGL33 { }));
+    let mut engine = core::Engine::new(Box::new(PlatformSDL2 {}), Box::new(RendererGL33 {}));
     println!("{}", engine.platform().get_name());
     println!("{}", engine.renderer().get_name());
 
