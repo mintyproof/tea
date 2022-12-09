@@ -274,6 +274,7 @@ dependencies = [
 name = "tea"
 version = "0.1.0"
 dependencies = [
+ "lazy_static",
  "sdl2",
  "wren-rust",
 ]

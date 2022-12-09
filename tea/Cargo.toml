@@ -5,5 +5,6 @@ edition = "2021"
 repository = "https://github.com/mintyproof/tea/"
 
 [dependencies]
+lazy_static = "1"
 sdl2 = { version = "0.35", features = ["bundled"] }
 wren-rust = { path = "../wren-rust" }
