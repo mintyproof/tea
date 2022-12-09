@@ -1,10 +1,7 @@
 use crate::core::Platform;
 
 use sdl2::{
-    Sdl, TimerSubsystem, VideoSubsystem, EventPump,
-    event::Event,
-    keyboard::Keycode,
-    video::Window
+    event::Event, keyboard::Keycode, video::Window, EventPump, Sdl, TimerSubsystem, VideoSubsystem,
 };
 
 pub struct PlatformSDL2 {
@@ -15,19 +12,23 @@ pub struct PlatformSDL2 {
     event_pump: EventPump,
     ticks_at_init: u64,
     performance_counter_at_init: u64,
-    window: Window
+    window: Window,
 }
 
 impl PlatformSDL2 {
     pub fn new() -> Self {
         let sdl = sdl2::init().expect("failed to initialize SDL2");
-        let timer = sdl.timer().expect("failed to initialize SDL2 timer subsystem");
-        let video = sdl.video().expect("failed to initialize SDL2 video subsystem");
+        let timer = sdl
+            .timer()
+            .expect("failed to initialize SDL2 timer subsystem");
+        let video = sdl
+            .video()
+            .expect("failed to initialize SDL2 video subsystem");
         let event_pump = sdl.event_pump().expect("failed to create SDL2 event pump");
 
         let ticks_at_init = timer.ticks() as u64;
         let performance_counter_at_init = timer.performance_counter();
-        
+
         let window = video
             .window("", 800, 600)
             .position_centered()
@@ -37,9 +38,13 @@ impl PlatformSDL2 {
 
         Self {
             should_quit: false,
-            sdl, timer, video, event_pump,
-            ticks_at_init, performance_counter_at_init,
-            window
+            sdl,
+            timer,
+            video,
+            event_pump,
+            ticks_at_init,
+            performance_counter_at_init,
+            window,
         }
     }
 }
@@ -56,7 +61,8 @@ impl Platform for PlatformSDL2 {
     fn runtime_seconds(&self) -> f64 {
         let performance_counter_now = self.timer.performance_counter();
         let frequency = self.timer.performance_frequency();
-        return (performance_counter_now - self.performance_counter_at_init) as f64 / frequency as f64;
+        return (performance_counter_now - self.performance_counter_at_init) as f64
+            / frequency as f64;
     }
 
     fn poll_events(&mut self) {

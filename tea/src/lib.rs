@@ -15,7 +15,7 @@ pub struct Config {
 
 pub fn run(_config: Config) -> Result<(), Box<dyn Error>> {
     let platform = PlatformSDL2::new();
-    let renderer = RendererGL33 { };
+    let renderer = RendererGL33::new();
     let mut engine = core::Engine::new(Box::new(platform), Box::new(renderer));
     while !engine.platform().should_quit() {
         engine.platform_mut().poll_events();
