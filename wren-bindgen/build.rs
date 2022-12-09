@@ -15,6 +15,7 @@ fn main() {
         .file("wren-c/src/optional/wren_opt_meta.c")
         .file("wren-c/src/optional/wren_opt_random.c")
         .includes(["wren-c/src/include", "wren-c/src/optional", "wren-c/src/vm"])
+        .warnings(false)
         .compile("wren");
 
     let bindings = bindgen::Builder::default()
@@ -23,8 +24,6 @@ fn main() {
             "-Iwren-c/src/include",
             "-Iwren-c/src/optional",
             "-Iwren-c/src/vm",
-            "-Wno-unused-parameter",
-            "-Wno-unused-variable",
         ])
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .generate()
